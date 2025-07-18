@@ -108,13 +108,21 @@ function generateChordsForSection(
     const phrygianBII = getChordFromModeAndDegree(keyRoot, 'Phrygian', 'bII');
     if(phrygianBII) rn['bII'] = phrygianBII;
 
+    // --- Inizio Nuova Logica di Calcolo Lunghezza ---
     const sectionChordParams = SECTION_CHORD_TARGETS[cleanSectionNameForStyle] || SECTION_CHORD_TARGETS[getCleanSectionName(sectionName.split(" ")[0])] || SECTION_CHORD_TARGETS["default"];
-    let targetBaseProgressionLength = getRandomElement(
-        Array.from({ length: sectionChordParams.typicalMax - sectionChordParams.typicalMin + 1 }, (_, i) => sectionChordParams.typicalMin + i)
-    );
-    targetBaseProgressionLength = Math.max(1, Math.min(targetBaseProgressionLength, 5));
-    if (cleanSectionNameForStyle === "silence") targetBaseProgressionLength = 0;
-targetBaseProgressionLength = 3; // FORZATURA PER TEST DIAGNOSTICO
+
+    // Assicura che min e max siano numeri validi, con un fallback
+    const minChords = typeof sectionChordParams.typicalMin === 'number' ? sectionChordParams.typicalMin : 2;
+    const maxChords = typeof sectionChordParams.typicalMax === 'number' ? sectionChordParams.typicalMax : 4;
+
+    // Calcola un numero intero casuale tra minChords e maxChords (inclusi)
+    let targetBaseProgressionLength = Math.floor(Math.random() * (maxChords - minChords + 1)) + minChords;
+
+    // Gestisce il caso speciale della sezione "silence"
+    if (cleanSectionNameForStyle === "silence") {
+        targetBaseProgressionLength = 0;
+    }
+    // --- Fine Nuova Logica di Calcolo Lunghezza ---
 
     // Fase 1: Nuova Libreria di Pattern Armonici
     const POP_PATTERNS = {
