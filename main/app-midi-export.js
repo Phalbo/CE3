@@ -44,8 +44,13 @@ function buildSongDataForTextFile() {
 
     sections.forEach(sectionData => {
         songDataText += `\n${sectionData.name.toUpperCase()} (${sectionData.measures} bars in ${sectionData.timeSignature[0]}/${sectionData.timeSignature[1]})\n`;
-        if (sectionData.baseChords && sectionData.baseChords.length > 0) {
-            songDataText += `Chords: [ ${sectionData.baseChords.join(' | ')} ]\n`;
+        if (sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0) {
+            const ticksPerBeat = (4 / sectionData.timeSignature[1]) * TPQN_TEXT;
+            const chordsWithDuration = sectionData.mainChordSlots.map(slot => {
+                const durationInBeats = (slot.effectiveDurationTicks / ticksPerBeat).toFixed(2).replace(/\.00$/, '');
+                return `${slot.chordName} (${durationInBeats} beats)`;
+            });
+            songDataText += `Chords: [ ${chordsWithDuration.join(' | ')} ]\n`;
         }
     });
     currentSongDataForSave = {title: title, content: songDataText};

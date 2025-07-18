@@ -135,8 +135,10 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
         output += `  <div class="section-card-header">${sectionTitleForDisplay}</div>`;
         output += `  <div class="section-card-body">`;
         output += `    <div class="section-card-chords-container">`;
-        const chordsString = sectionData.baseChords && sectionData.baseChords.length > 0 ? sectionData.baseChords.join(' | ') : '';
-        output += `      <div class="section-card-chords" data-chords="${chordsString}" data-has-chords="${!!chordsString}"></div>`;
+        const chordsString = sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0
+            ? sectionData.mainChordSlots.map(slot => slot.chordName).join(' | ')
+            : '(Instrumental/Silence)';
+        output += `      <div class="section-card-chords" data-chords="${chordsString}" data-has-chords="${!!(sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0)}">${chordsString}</div>`;
         output += `    </div>`;
         output += `    <div class="section-bars-label">${barCountActual} bars</div>`;
         output += `  </div>`;

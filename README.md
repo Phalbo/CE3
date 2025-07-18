@@ -1,4 +1,11 @@
-# CapricEngine v2.24
+# CapricEngine v2.25
+
+## Changelog (v2.25)
+
+*   **Dynamic Harmony Engine:** The harmonic engine now generates a variable number of chords per section (from 2 to 5) instead of a fixed number. This creates more natural and varied harmonic progressions.
+    *   The number of chords is chosen based on the section type (e.g., verses are more likely to have 3-5 chords, while bridges might have 2-3).
+    *   The rhythm of the chords is dynamically adjusted to fit the section's length, ensuring all instruments remain perfectly synchronized.
+    *   This change affects all generative modules (melody, bass, arpeggiator), which now adapt to the new harmonic structure.
 
 ## Changelog (v2.24)
 
