@@ -83,6 +83,21 @@ body::before {
     --diagram-finger-color: var(--bg-primary); /* Colore del testo del numero del dito */
     --diagram-open-color: var(--text-secondary); /* Colore per indicare corda a vuoto */
     --diagram-muted-color: var(--text-muted); /* Colore per la 'x' di corda muta */
+
+    --btn-countermelody-bg: #4a90e2;
+    --btn-countermelody-hover-bg: #5aa1f2;
+    --btn-texture-bg: #50e3c2;
+    --btn-texture-hover-bg: #61f3d2;
+    --btn-ornament-bg: #bd10e0;
+    --btn-ornament-hover-bg: #cd21f0;
+    --btn-miasmatic-bg: #9013fe;
+    --btn-miasmatic-hover-bg: #a024fe;
+    --btn-drones-bg: #f5a623;
+    --btn-drones-hover-bg: #f6b734;
+    --btn-percussion-bg: #f8e71c;
+    --btn-percussion-hover-bg: #f9f82d;
+    --btn-glitch-bg: #d0021b;
+    --btn-glitch-hover-bg: #e0132c;
 }
 .chord-diagram-svg.guitar text { /* Stile base per testo dentro SVG chitarra */
     font-family: var(--font-primary);
