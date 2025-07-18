@@ -371,11 +371,9 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
             if (typeof updateEstimatedSongDuration === "function") {
                 updateEstimatedSongDuration();
             }
-            setTimeout(() => {
-                if (typeof window.attachActionListenersGlobal === "function") {
-                    window.attachActionListenersGlobal();
-                }
-            }, 0);
+        if (typeof window.attachActionListenersGlobal === "function") {
+            setTimeout(() => window.attachActionListenersGlobal(), 0);
+        }
         })
         .catch(mainError => {
             console.error("Error during glossary promise resolution:", mainError, mainError.stack);
