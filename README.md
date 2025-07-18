@@ -1,3 +1,15 @@
+# CapricEngine v2.27
+
+## Changelog (v2.27)
+
+*   **Critical Bug Fixes & Stability Improvements:** This version addresses critical bugs that prevented the application from functioning correctly.
+    *   **Fixed `TypeError: ... is null`:** Resolved a critical timing issue where JavaScript event listeners were being attached before the HTML elements were available in the DOM. The `attachActionListenersGlobal` function is now called inside a `setTimeout` to ensure the DOM is fully rendered, restoring functionality to all action buttons.
+    *   **Pad Generator Restored:** The "Pad" generator button is now fully functional, as its event listener is no longer blocked by the timing error.
+    *   **Button Styles Restored:** Corrected the HTML structure and CSS to ensure all action buttons (both original and new) are displayed with the correct and consistent styling.
+*   **Code Simplification:**
+    *   Removed the experimental and unrequested multi-track export functionality (`Export All` button and related functions) to simplify the code and focus on core features.
+    *   Refactored the `addTrackToMidiData` helper to trigger direct single-track downloads, restoring the expected behavior for all new generator buttons.
+
 # CapricEngine v2.26
 
 ## Changelog (v2.26)
