@@ -16,79 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const keySelectionDropdown = document.getElementById('keySelection');
     const structureDropdown = document.getElementById('songStructure');
 
-    // --- Creazione dinamica dei pulsanti di azione ---
-    const actionButtonsContainer = document.createElement('div');
-    actionButtonsContainer.id = 'actionButtonsContainer';
-    actionButtonsContainer.className = 'action-buttons-container';
-
-    const saveSongButton = document.createElement('button');
-    saveSongButton.id = 'saveSongButton'; saveSongButton.textContent = 'Save Details';
-    saveSongButton.style.display = 'none'; saveSongButton.type = 'button';
-    actionButtonsContainer.appendChild(saveSongButton);
-
-    const downloadSingleTrackChordMidiButton = document.createElement('button');
-    downloadSingleTrackChordMidiButton.id = 'downloadSingleTrackChordMidiButton';
-    downloadSingleTrackChordMidiButton.textContent = 'Chords (Pad)'; // Nome aggiornato
-    downloadSingleTrackChordMidiButton.style.display = 'none'; downloadSingleTrackChordMidiButton.type = 'button';
-    actionButtonsContainer.appendChild(downloadSingleTrackChordMidiButton);
-
-    // NUOVO PULSANTE per "Chords Rhythm"
-    const generateChordRhythmButton = document.createElement('button');
-    generateChordRhythmButton.id = 'generateChordRhythmButton'; // ID per il nuovo pulsante
-    generateChordRhythmButton.textContent = 'Arpeggiator';
-    generateChordRhythmButton.style.display = 'none'; generateChordRhythmButton.type = 'button';
-    actionButtonsContainer.appendChild(generateChordRhythmButton); // Assicurati che sia aggiunto qui!
-
-    // Rimuovi esplicitamente il vecchio pulsante "Chords (multitrack)" se esistesse nel DOM
-    // Questo previene che un vecchio elemento HTML interferisca.
-    const oldMultiTrackButton = document.getElementById('downloadMidiButton');
-    if (oldMultiTrackButton && oldMultiTrackButton.parentNode) {
-        oldMultiTrackButton.parentNode.removeChild(oldMultiTrackButton);
-    }
-
-
-    const generateMelodyButton = document.createElement('button');
-    generateMelodyButton.id = 'generateMelodyButton';
-    generateMelodyButton.textContent = 'Inspiration (Melody)';
-    generateMelodyButton.style.display = 'none'; generateMelodyButton.type = 'button';
-    actionButtonsContainer.appendChild(generateMelodyButton);
-
-    const generateVocalLineButton = document.createElement('button');
-    generateVocalLineButton.id = 'generateVocalLineButton';
-    generateVocalLineButton.textContent = 'Vocal line Generator';
-    generateVocalLineButton.style.display = 'none'; generateVocalLineButton.type = 'button';
-    actionButtonsContainer.appendChild(generateVocalLineButton);
-
-    const generateBassLineButton = document.createElement('button');
-    generateBassLineButton.id = 'generateBassLineButton';
-    generateBassLineButton.textContent = 'Deekonizer (bass)';
-    generateBassLineButton.style.display = 'none'; generateBassLineButton.type = 'button';
-    actionButtonsContainer.appendChild(generateBassLineButton);
-
-    const generateDrumTrackButton = document.createElement('button');
-    generateDrumTrackButton.id = 'generateDrumTrackButton';
-    generateDrumTrackButton.textContent = 'LingoStarr (drum)';
-    generateDrumTrackButton.style.display = 'none'; generateDrumTrackButton.type = 'button';
-    actionButtonsContainer.appendChild(generateDrumTrackButton);
-
-    // Inserimento dei pulsanti nel DOM
-    if (songOutputContainer) {
-        if (!midiSectionTitleElement) {
-            midiSectionTitleElement = document.createElement('h3');
-            midiSectionTitleElement.id = 'midiDownloadTitle';
-            midiSectionTitleElement.className = 'chord-glossary-title';
-            midiSectionTitleElement.textContent = 'Download your global hit in MIDI format';
-            midiSectionTitleElement.style.display = 'none';
-            midiSectionTitleElement.style.marginTop = '30px';
-            songOutputContainer.insertBefore(midiSectionTitleElement, songOutputDiv.nextSibling);
-        }
-        songOutputContainer.insertBefore(actionButtonsContainer, midiSectionTitleElement.nextSibling);
-
-    } else if (songOutputDiv && songOutputDiv.parentNode) {
-        songOutputDiv.parentNode.insertBefore(actionButtonsContainer, songOutputDiv.nextSibling);
-    } else {
-        document.body.appendChild(actionButtonsContainer);
-    }
+    // I pulsanti di azione sono ora definiti staticamente in index.html
+    // La logica qui si occuperà solo di gestirli.
 
     // --- Popolamento dropdown tonalità ---
    if (keySelectionDropdown && typeof possibleKeysAndModes !== 'undefined' && possibleKeysAndModes.length > 0) {
@@ -202,6 +131,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 newSelect.addEventListener('change', handleShapeChange);
             }
         });
+
+        // Listener per i nuovi generatori
+        const helpers = { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType };
+        document.getElementById('generateCountermelodyButton').addEventListener('click', () => addTrackToMidiData('Countermelody', generateCountermelodyForSong(currentMidiData, helpers, sectionCache)));
+        document.getElementById('generateTextureButton').addEventListener('click', () => addTrackToMidiData('Texture', generateTextureForSong(currentMidiData, helpers, sectionCache)));
+        document.getElementById('generateDronesButton').addEventListener('click', () => addTrackToMidiData('Drones', generateDronesForSong(currentMidiData, helpers, sectionCache)));
+        document.getElementById('generateOrnamentButton').addEventListener('click', () => addTrackToMidiData('Ornament', generateOrnamentForSong(currentMidiData, helpers, sectionCache)));
+        document.getElementById('generateMiasmaticButton').addEventListener('click', () => addTrackToMidiData('Miasmatic', generateMiasmaticForSong(currentMidiData, helpers, sectionCache)));
+        document.getElementById('generatePercussionButton').addEventListener('click', () => addTrackToMidiData('Percussion', generatePercussionForSong(currentMidiData, helpers, sectionCache)));
+        document.getElementById('generateGlitchFxButton').addEventListener('click', () => addTrackToMidiData('GlitchFx', generateGlitchFxForSong(currentMidiData, helpers, sectionCache)));
     };
 });
 
+function addTrackToMidiData(trackName, trackEvents) {
+    if (!currentMidiData) {
+        alert("Please generate a song first.");
+        return;
+    }
+    if (!currentMidiData.tracks) {
+        currentMidiData.tracks = {};
+    }
+    currentMidiData.tracks[trackName] = trackEvents;
+    console.log(`SUCCESS: ${trackName} track generated with ${trackEvents.length} events.`);
+    alert(`${trackName} track generated!`);
+    // Aggiungere logica per aggiornare la UI qui, se necessario
+}
