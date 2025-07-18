@@ -158,11 +158,10 @@ function addTrackToMidiData(trackName, trackEvents) {
         alert("Please generate a song first.");
         return;
     }
-    if (!currentMidiData.tracks) {
-        currentMidiData.tracks = {};
+    if (trackEvents && trackEvents.length > 0) {
+        const fileName = `${currentMidiData.title.replace(/[^a-zA-Z0-9_]/g, '_')}_${trackName}.mid`;
+        downloadSingleTrackMidi(trackName, trackEvents, fileName, currentMidiData.bpm, currentMidiData.timeSignatureChanges);
+    } else {
+        alert(`Could not generate ${trackName} track with the current data.`);
     }
-    currentMidiData.tracks[trackName] = trackEvents;
-    console.log(`SUCCESS: ${trackName} track generated with ${trackEvents.length} events.`);
-    alert(`${trackName} track generated!`);
-    // Aggiungere logica per aggiornare la UI qui, se necessario
 }
