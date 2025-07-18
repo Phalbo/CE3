@@ -495,9 +495,6 @@ async function generateSongArchitecture() {
             btn.style.display = 'block';
         });
 
-        if (typeof window.attachActionListenersGlobal === "function") {
-             window.attachActionListenersGlobal();
-        }
 
     } catch (error) {
         console.error("ERRORE CRITICO durante la generazione dell'architettura:", error, error.stack);
