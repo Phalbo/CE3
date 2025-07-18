@@ -133,7 +133,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Listener per i nuovi generatori
-        const helpers = { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType };
+        const helpers = {
+            getChordNotes,
+            NOTE_NAMES,
+            normalizeSectionName,
+            getRandomElement,
+            getPitchFromSymbol,
+            getChordRootAndType,
+            getDiatonicChords // Aggiunto
+        };
         document.getElementById('generateCountermelodyButton').addEventListener('click', () => addTrackToMidiData('Countermelody', generateCountermelodyForSong(currentMidiData, helpers, sectionCache)));
         document.getElementById('generateTextureButton').addEventListener('click', () => addTrackToMidiData('Texture', generateTextureForSong(currentMidiData, helpers, sectionCache)));
         document.getElementById('generateDronesButton').addEventListener('click', () => addTrackToMidiData('Drones', generateDronesForSong(currentMidiData, helpers, sectionCache)));
@@ -141,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('generateMiasmaticButton').addEventListener('click', () => addTrackToMidiData('Miasmatic', generateMiasmaticForSong(currentMidiData, helpers, sectionCache)));
         document.getElementById('generatePercussionButton').addEventListener('click', () => addTrackToMidiData('Percussion', generatePercussionForSong(currentMidiData, helpers, sectionCache)));
         document.getElementById('generateGlitchFxButton').addEventListener('click', () => addTrackToMidiData('GlitchFx', generateGlitchFxForSong(currentMidiData, helpers, sectionCache)));
+        document.getElementById('exportAllButton').addEventListener('click', () => handleExportAllTracks());
     };
 });
 

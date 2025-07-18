@@ -75,54 +75,63 @@ function handleSaveSong() {
     URL.revokeObjectURL(url);
 }
 
-function downloadMultiTrackMidi(tracks, fileName, bpm, timeSignatureChangesArray) {
-    if (!tracks || tracks.length === 0) {
-        alert("No tracks to export.");
-        return;
+function downloadSingleTrackMidi(trackName, midiEvents, fileName, bpm, timeSignatureChangesArray, instrumentId = 0, isDrumTrack = false) {
+    if (!isDrumTrack && (!midiEvents || midiEvents.length === 0)) {
+         alert("No MIDI events generated for this track.");
+         return;
     }
     if (typeof MidiWriter === 'undefined') {
         alert("Internal Error: MIDI library not found.");
         return;
     }
 
-    const writer = new MidiWriter.Writer(tracks);
+    const track = new MidiWriter.Track();
+    track.setTempo(bpm, 0);
+    track.addTrackName(trackName);
+
+    const actualTimeSignatures = (currentMidiData && currentMidiData.timeSignatureChanges && currentMidiData.timeSignatureChanges.length > 0)
+                                 ? currentMidiData.timeSignatureChanges
+                                 : (timeSignatureChangesArray && timeSignatureChangesArray.length > 0 ? timeSignatureChangesArray : [{tick: 0, ts: [4,4]}]);
+
+    actualTimeSignatures.forEach(tsEvent => {
+        track.addEvent(new MidiWriter.TimeSignatureEvent(tsEvent.ts[0], tsEvent.ts[1]), {tick: Math.round(tsEvent.tick)});
+    });
+
+    if (midiEvents && midiEvents.length > 0) {
+        midiEvents.forEach(event => {
+            if (!event || typeof event.pitch === 'undefined' || !event.duration || typeof event.startTick === 'undefined') return;
+            const pitchArray = Array.isArray(event.pitch) ? event.pitch : [event.pitch];
+            const durationString = typeof event.duration === 'string' && event.duration.startsWith('T') ? event.duration : `T${Math.round(event.duration)}`;
+
+            const noteEventArgs = {
+                pitch: pitchArray.filter(p => p !== null && p >=0 && p <=127),
+                duration: durationString,
+                startTick: Math.round(event.startTick),
+                velocity: event.velocity || (isDrumTrack ? 90 : 70),
+                channel: isDrumTrack ? 10 : 1
+            };
+            if (noteEventArgs.pitch.length === 0) return;
+
+            try {
+                track.addEvent(new MidiWriter.NoteEvent(noteEventArgs));
+            } catch (e) {
+                console.error("Error adding NoteEvent:", e, "Event data:", noteEventArgs);
+            }
+        });
+    }
+
+    const writer = new MidiWriter.Writer([track]);
     const dataUri = writer.dataUri();
     const link = document.createElement('a');
     link.href = dataUri;
-    link.download = fileName.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_');
+    link.download = fileName.replace(/[^\w\s.-]/gi,'_').replace(/\s+/g,'_');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
 
-function handleSaveSong() {
-    buildSongDataForTextFile();
-    if (!currentMidiData || !currentMidiData.tracks) {
-        alert("No song data to save. Please generate a song first.");
-        return;
-    }
-
-    const tracks = [];
-    Object.entries(currentMidiData.tracks).forEach(([trackName, trackEvents]) => {
-        const track = new MidiWriter.Track();
-        track.addTrackName(trackName);
-        trackEvents.forEach(event => {
-            track.addEvent(new MidiWriter.NoteEvent({
-                pitch: event.pitch,
-                duration: event.duration,
-                startTick: event.startTick,
-                velocity: event.velocity
-            }));
-        });
-        tracks.push(track);
-    });
-
-    const fileName = (currentMidiData.title || "Phalbo_Caprice").replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_') + '.mid';
-    downloadMultiTrackMidi(tracks, fileName, currentMidiData.bpm, currentMidiData.timeSignatureChanges);
-}
-
-function handleGenerateSingleTrackChordMidi() {
-    if (!currentMidiData || !currentMidiData.sections) { alert("Please generate a song first."); return; }
+function handleGenerateSingleTrackChordMidi(returnOnly = false) {
+    if (!currentMidiData || !currentMidiData.sections) { if(!returnOnly) alert("Please generate a song first."); return; }
     const { title, bpm, sections, timeSignatureChanges } = currentMidiData;
     const chordMIDIEvents = [];
 
@@ -156,16 +165,19 @@ function handleGenerateSingleTrackChordMidi() {
             });
         }
     });
+
+    if (returnOnly) return chordMIDIEvents;
+
     const midiFileNameST = `${title.replace(/[^a-zA-Z0-9_]/g, '_')}_Pad.mid`;
     downloadSingleTrackMidi(`Pad for ${title}`, chordMIDIEvents, midiFileNameST, bpm, timeSignatureChanges, 0);
 }
 
-function handleGenerateChordRhythm() {
-    if (!currentMidiData || !currentMidiData.sections) { alert("Please generate a song first."); return; }
-    if (typeof generateChordRhythmEvents !== "function") { alert("Internal Error: Arpeggiator function not found."); return; }
+function handleGenerateChordRhythm(returnOnly = false) {
+    if (!currentMidiData || !currentMidiData.sections) { if(!returnOnly) alert("Please generate a song first."); return; }
+    if (typeof generateChordRhythmEvents !== "function") { if(!returnOnly) alert("Internal Error: Arpeggiator function not found."); return; }
 
     const arpeggiatorBtn = document.getElementById('generateChordRhythmButton');
-    if (arpeggiatorBtn) { arpeggiatorBtn.disabled = true; arpeggiatorBtn.textContent = "Creating Arpeggio..."; }
+    if (arpeggiatorBtn && !returnOnly) { arpeggiatorBtn.disabled = true; arpeggiatorBtn.textContent = "Creating Arpeggio..."; }
 
     try {
         let allRhythmicChordEvents = [];
@@ -296,4 +308,85 @@ function handleGenerateDrumTrack() {
         alert("Critical error during drum track generation: " + e.message);
     }
     finally { if (drumBtn) { drumBtn.disabled = false; drumBtn.textContent = "LingoStarr (drum)"; } }
+}
+
+function downloadMultiTrackMidi(tracks, fileName, bpm, timeSignatureChangesArray) {
+    if (!tracks || tracks.length === 0) {
+        alert("No tracks to export.");
+        return;
+    }
+    if (typeof MidiWriter === 'undefined') {
+        alert("Internal Error: MIDI library not found.");
+        return;
+    }
+
+    const writer = new MidiWriter.Writer(tracks);
+    const dataUri = writer.dataUri();
+    const link = document.createElement('a');
+    link.href = dataUri;
+    link.download = fileName.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function handleExportAllTracks() {
+    if (!currentMidiData) {
+        alert("No song data to export. Please generate a song first.");
+        return;
+    }
+
+    const tracks = [];
+
+    // Aggiungi le tracce esistenti
+    const existingTracks = {
+        'Pad': handleGenerateSingleTrackChordMidi(true),
+        'Arpeggio': handleGenerateChordRhythm(true),
+        'Melody': handleGenerateMelody(true),
+        'Vocal': handleGenerateVocalLine(true),
+        'Bass': handleGenerateBassLine(true),
+        'Drums': handleGenerateDrumTrack(true)
+    };
+
+    for (const [trackName, trackEvents] of Object.entries(existingTracks)) {
+        if (trackEvents && trackEvents.length > 0) {
+            const track = new MidiWriter.Track();
+            track.addTrackName(trackName);
+            trackEvents.forEach(event => {
+                track.addEvent(new MidiWriter.NoteEvent({
+                    pitch: event.pitch,
+                    duration: event.duration,
+                    startTick: event.startTick,
+                    velocity: event.velocity
+                }));
+            });
+            tracks.push(track);
+        }
+    }
+
+    // Aggiungi le nuove tracce custom
+    if (currentMidiData.tracks) {
+        for (const [trackName, trackEvents] of Object.entries(currentMidiData.tracks)) {
+            if (trackEvents && trackEvents.length > 0) {
+                const track = new MidiWriter.Track();
+                track.addTrackName(trackName);
+                trackEvents.forEach(event => {
+                    track.addEvent(new MidiWriter.NoteEvent({
+                        pitch: event.pitch,
+                        duration: event.duration,
+                        startTick: event.startTick,
+                        velocity: event.velocity
+                    }));
+                });
+                tracks.push(track);
+            }
+        }
+    }
+
+    if (tracks.length > 0) {
+        const fileName = (currentMidiData.title || "Phalbo_Caprice").replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_') + '_ALL.mid';
+        downloadMultiTrackMidi(tracks, fileName, currentMidiData.bpm, currentMidiData.timeSignatureChanges);
+    } else {
+        alert("No tracks with MIDI events were generated.");
+    }
 }
