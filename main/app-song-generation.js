@@ -484,9 +484,15 @@ async function generateSongArchitecture() {
         console.log("Progression cache during generation:", progressionCache);
 
         if (midiSectionTitleElement) midiSectionTitleElement.style.display = 'block';
-        actionButtonIDs.forEach(id => {
-            const btn = document.getElementById(id);
-            if(btn) btn.style.display = 'block';
+
+        const actionButtonsContainer = document.getElementById('action-buttons');
+        if(actionButtonsContainer) actionButtonsContainer.style.display = 'flex';
+
+        const newGeneratorsSection = document.querySelector('.new-generators-section');
+        if(newGeneratorsSection) newGeneratorsSection.style.display = 'flex';
+
+        document.querySelectorAll('.action-button').forEach(btn => {
+            btn.style.display = 'block';
         });
 
         if (typeof window.attachActionListenersGlobal === "function") {

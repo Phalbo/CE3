@@ -1,3 +1,21 @@
+# CapricEngine v2.26
+
+## Changelog (v2.26)
+
+*   **Advanced Generators Integration:** Seven new advanced musical generators have been added to expand the creative possibilities of the engine. Each generator is equipped with its own musical logic and is fully integrated into the existing architecture, including section-based caching for musical consistency.
+    *   **Countermelody:** Creates a secondary melodic line that arpeggiates the chords, alternating between ascending and descending patterns to create movement and interest.
+    *   **Texture:** Generates an airy, generative pad using high-octave notes (root, fifth, ninth) with slight timing variations to create a "shimmering" effect.
+    *   **Drones:** Produces a sustained root note of the chord, with a small chance of playing the fifth or third to add subtle variation.
+    *   **Ornament:** Adds realistic musical embellishments, such as trills and grace notes, with a low probability at the end of chord slots.
+    *   **Miasmatic:** Uses a library of 15 "miasma" vocal riffs, dynamically varying the velocity, duration, and octave of each note to make every performance unique.
+    *   **Percussion:** Includes a library of Rock, Funk, and Latin rhythmic patterns. It uses a fallback algorithm for non-4/4 time signatures to ensure a coherent result.
+    *   **Glitch Fx:** Adds tempo-synced glitch effects (stutter, pitch riser, gate) that are randomly triggered on strong beats, anchoring the chaos to the song's structure.
+*   **Architectural Enhancements:**
+    *   **Multi-track MIDI Export:** The MIDI export logic has been upgraded to support an arbitrary number of tracks, allowing all new generated parts to be included in a single MIDI file.
+    *   **Centralized Track Management:** A new helper function, `addTrackToMidiData`, has been implemented to centralize the process of adding new tracks to the main song data object.
+*   **UI Fixes:**
+    *   Resolved a regression where action buttons would not appear after song generation. All generator buttons are now correctly displayed.
+
 # CapricEngine v2.25
 
 ## Changelog (v2.25)
