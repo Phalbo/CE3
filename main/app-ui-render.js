@@ -140,6 +140,7 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
         const chordsString = sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0
             ? sectionData.mainChordSlots.map(slot => slot.chordName).join(' | ')
             : '(Instrumental/Silence)';
+
         output += `      <div class="section-card-chords" data-chords="${chordsString}" data-has-chords="${!!(sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0)}">${chordsString}</div>`;
         output += `    </div>`;
         output += `    <div class="section-bars-label">${barCountActual} bars</div>`;
