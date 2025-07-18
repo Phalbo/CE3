@@ -124,6 +124,7 @@ function generateChordsForSection(
     }
     // --- Fine Nuova Logica di Calcolo Lunghezza ---
 
+
     // Fase 1: Nuova Libreria di Pattern Armonici
     const POP_PATTERNS = {
         major: {
