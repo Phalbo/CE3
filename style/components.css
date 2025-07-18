@@ -537,3 +537,12 @@ button#generateDrumTrackButton:hover { background-color: var(--btn-drums-hover-b
   cursor: not-allowed; transform: none; box-shadow: none; 
   border-color: var(--btn-disabled-bg) !important; filter: saturate(0.5); 
 }
+
+/* === STILI PER I NUOVI PULSANTI === */
+button#generateCountermelodyButton { background-color: #4a90e2; color: white; border-color: #4a90e2; }
+button#generateTextureButton { background-color: #50e3c2; color: white; border-color: #50e3c2; }
+button#generateOrnamentButton { background-color: #bd10e0; color: white; border-color: #bd10e0; }
+button#generateMiasmaticButton { background-color: #9013fe; color: white; border-color: #9013fe; }
+button#generateDronesButton { background-color: #f5a623; color: white; border-color: #f5a623; }
+button#generatePercussionButton { background-color: #f8e71c; color: #333; border-color: #f8e71c; }
+button#generateGlitchFxButton { background-color: #d0021b; color: white; border-color: #d0021b; }
