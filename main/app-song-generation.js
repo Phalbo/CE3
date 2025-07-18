@@ -108,22 +108,12 @@ function generateChordsForSection(
     const phrygianBII = getChordFromModeAndDegree(keyRoot, 'Phrygian', 'bII');
     if(phrygianBII) rn['bII'] = phrygianBII;
 
-    // --- Inizio Nuova Logica di Calcolo Lunghezza ---
     const sectionChordParams = SECTION_CHORD_TARGETS[cleanSectionNameForStyle] || SECTION_CHORD_TARGETS[getCleanSectionName(sectionName.split(" ")[0])] || SECTION_CHORD_TARGETS["default"];
-
-    // Assicura che min e max siano numeri validi, con un fallback
     const minChords = typeof sectionChordParams.typicalMin === 'number' ? sectionChordParams.typicalMin : 2;
     const maxChords = typeof sectionChordParams.typicalMax === 'number' ? sectionChordParams.typicalMax : 4;
-
-    // Calcola un numero intero casuale tra minChords e maxChords (inclusi)
-    let targetBaseProgressionLength = Math.floor(Math.random() * (maxChords - minChords + 1)) + minChords;
-
-    // Gestisce il caso speciale della sezione "silence"
-    if (cleanSectionNameForStyle === "silence") {
-        targetBaseProgressionLength = 0;
-    }
-    // --- Fine Nuova Logica di Calcolo Lunghezza ---
-
+    console.log("MIN:", minChords, "MAX:", maxChords);
+    let targetBaseProgressionLength = 5; // FORZATURA A 5 PER TEST
+    console.log("LUNGHEZZA FORZATA A:", targetBaseProgressionLength);
 
     // Fase 1: Nuova Libreria di Pattern Armonici
     const POP_PATTERNS = {
