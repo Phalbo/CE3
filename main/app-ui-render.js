@@ -112,6 +112,8 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
 
     output += `<div class="song-sections-timeline" id="song-timeline-container">`;
     sections.forEach((sectionData, sectionIndex) => {
+        if (sectionData.measures === 0) return; // Non renderizzare sezioni a zero misure
+
         const cleanSectionNameForCssVar = getCleanSectionName(sectionData.name);
         const sectionTitleForDisplay = sectionData.name.replace(/-/g, ' ');
         const barCountActual = sectionData.measures;
@@ -133,10 +135,16 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
         output += `<div class="timeline-section-card" id="timeline-section-${sectionIndex}"
                         style="--section-color-var: var(${sectionColorVarName}, var(--section-color-default)); width: ${sectionWidthPx}px;">`;
         output += `  <div class="section-card-header">${sectionTitleForDisplay}</div>`;
-        output += `  <div class="section-card-body" id="section-body-${sectionIndex}">`; // Aggiunto ID per targettizzare
-        // Il contenuto verrà aggiunto dinamicamente dopo il rendering iniziale
+        output += `  <div class="section-card-body">`;
+        output += `    <div class="section-card-chords-container">`;
+        const chordsString = sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0
+            ? sectionData.mainChordSlots.map(slot => slot.chordName).join(' | ')
+            : '(Instrumental/Silence)';
+        output += `      <div class="section-card-chords" data-chords="${chordsString}" data-has-chords="${!!(sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0)}"></div>`;
+        output += `    </div>`;
+        output += `    <div class="section-bars-label">${barCountActual} bars</div>`;
         output += `  </div>`;
-        output += `  <div class="section-bars-label">${barCountActual} bars</div>`;
+        output += `  <div class="section-bar-grid" data-bar-count="${barCountActual}"></div>`;
         output += `</div>`;
     });
     output += `</div>`;
