@@ -538,11 +538,17 @@ button#generateDrumTrackButton:hover { background-color: var(--btn-drums-hover-b
   border-color: var(--btn-disabled-bg) !important; filter: saturate(0.5); 
 }
 
-/* === STILI PER I NUOVI PULSANTI === */
-button#generateCountermelodyButton { background-color: #4a90e2; color: white; border-color: #4a90e2; }
-button#generateTextureButton { background-color: #50e3c2; color: white; border-color: #50e3c2; }
-button#generateOrnamentButton { background-color: #bd10e0; color: white; border-color: #bd10e0; }
-button#generateMiasmaticButton { background-color: #9013fe; color: white; border-color: #9013fe; }
-button#generateDronesButton { background-color: #f5a623; color: white; border-color: #f5a623; }
-button#generatePercussionButton { background-color: #f8e71c; color: #333; border-color: #f8e71c; }
-button#generateGlitchFxButton { background-color: #d0021b; color: white; border-color: #d0021b; }
+button#generateCountermelodyButton { background-color: var(--btn-countermelody-bg); color: var(--text-on-accent-dark); border-color: var(--btn-countermelody-hover-bg); }
+button#generateCountermelodyButton:hover { background-color: var(--btn-countermelody-hover-bg); }
+button#generateTextureButton { background-color: var(--btn-texture-bg); color: var(--text-on-accent-dark); border-color: var(--btn-texture-hover-bg); }
+button#generateTextureButton:hover { background-color: var(--btn-texture-hover-bg); }
+button#generateOrnamentButton { background-color: var(--btn-ornament-bg); color: var(--text-on-accent-dark); border-color: var(--btn-ornament-hover-bg); }
+button#generateOrnamentButton:hover { background-color: var(--btn-ornament-hover-bg); }
+button#generateMiasmaticButton { background-color: var(--btn-miasmatic-bg); color: var(--text-on-accent-dark); border-color: var(--btn-miasmatic-hover-bg); }
+button#generateMiasmaticButton:hover { background-color: var(--btn-miasmatic-hover-bg); }
+button#generateDronesButton { background-color: var(--btn-drones-bg); color: var(--text-on-accent-dark); border-color: var(--btn-drones-hover-bg); }
+button#generateDronesButton:hover { background-color: var(--btn-drones-hover-bg); }
+button#generatePercussionButton { background-color: var(--btn-percussion-bg); color: var(--text-on-accent-dark); border-color: var(--btn-percussion-hover-bg); }
+button#generatePercussionButton:hover { background-color: var(--btn-percussion-hover-bg); }
+button#generateGlitchFxButton { background-color: var(--btn-glitch-bg); color: var(--text-on-accent-dark); border-color: var(--btn-glitch-hover-bg); }
+button#generateGlitchFxButton:hover { background-color: var(--btn-glitch-hover-bg); }

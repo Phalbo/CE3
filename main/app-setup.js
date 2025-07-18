@@ -16,63 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const keySelectionDropdown = document.getElementById('keySelection');
     const structureDropdown = document.getElementById('songStructure');
 
-    // --- Creazione dinamica dei pulsanti di azione ---
-    const actionButtonsContainer = document.createElement('div');
-    actionButtonsContainer.id = 'action-buttons';
-    actionButtonsContainer.className = 'action-buttons-container';
-    actionButtonsContainer.style.display = 'none';
-
-    const newGeneratorsSection = document.createElement('div');
-    newGeneratorsSection.className = 'new-generators-section';
-    newGeneratorsSection.style.display = 'none';
-
-    const createButton = (id, text, container) => {
-        const button = document.createElement('button');
-        button.id = id;
-        button.textContent = text;
-        button.className = 'action-button';
-        container.appendChild(button);
-    };
-
-    // Pulsanti originali
-    createButton('saveSongButton', 'Save Song Data', actionButtonsContainer);
-    createButton('downloadSingleTrackChordMidiButton', 'Pad', actionButtonsContainer);
-    createButton('generateChordRhythmButton', 'Arpeggiator', actionButtonsContainer);
-    createButton('generateMelodyButton', 'Inspiration (Melody)', actionButtonsContainer);
-    createButton('generateVocalLineButton', 'Vocal Shame Machine', actionButtonsContainer);
-    createButton('generateBassLineButton', 'Deekonizer (bass)', actionButtonsContainer);
-    createButton('generateDrumTrackButton', 'LingoStarr (drum)', actionButtonsContainer);
-
-    // Nuovi pulsanti
-    createButton('generateCountermelodyButton', 'Countermelody', newGeneratorsSection);
-    createButton('generateTextureButton', 'Texture', newGeneratorsSection);
-    createButton('generateOrnamentButton', 'Ornament', newGeneratorsSection);
-    createButton('generateMiasmaticButton', 'Miasmatic', newGeneratorsSection);
-    createButton('generateDronesButton', 'Drones', newGeneratorsSection);
-    createButton('generatePercussionButton', 'Percussion', newGeneratorsSection);
-    createButton('generateGlitchFxButton', 'Glitch fx', newGeneratorsSection);
-
-    // Inserimento dei contenitori nel DOM
-    if (songOutputContainer) {
-        if (!midiSectionTitleElement) {
-            midiSectionTitleElement = document.createElement('h3');
-            midiSectionTitleElement.id = 'midiDownloadTitle';
-            midiSectionTitleElement.className = 'chord-glossary-title';
-            midiSectionTitleElement.textContent = 'Download your global hit in MIDI format';
-            midiSectionTitleElement.style.display = 'none';
-            midiSectionTitleElement.style.marginTop = '30px';
-            songOutputContainer.insertBefore(midiSectionTitleElement, songOutputDiv.nextSibling);
-        }
-        songOutputContainer.insertBefore(actionButtonsContainer, midiSectionTitleElement.nextSibling);
-        songOutputContainer.insertBefore(newGeneratorsSection, actionButtonsContainer.nextSibling);
-
-    } else if (songOutputDiv && songOutputDiv.parentNode) {
-        songOutputDiv.parentNode.insertBefore(actionButtonsContainer, songOutputDiv.nextSibling);
-        songOutputDiv.parentNode.insertBefore(newGeneratorsSection, actionButtonsContainer.nextSibling);
-    } else {
-        document.body.appendChild(actionButtonsContainer);
-        document.body.appendChild(newGeneratorsSection);
-    }
+    const actionButtonsContainer = document.getElementById('action-buttons');
 
     // --- Popolamento dropdown tonalità ---
    if (keySelectionDropdown && typeof possibleKeysAndModes !== 'undefined' && possibleKeysAndModes.length > 0) {
@@ -156,54 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
         addListener('generateBassLineButton', handleGenerateBassLine);
         addListener('generateDrumTrackButton', handleGenerateDrumTrack);
 
-        const helpers = {
-            getChordNotes,
-            NOTE_NAMES,
-            normalizeSectionName,
-            getRandomElement,
-            getPitchFromSymbol,
-            getChordRootAndType,
-            getDiatonicChords // Aggiunto
-        };
-        const countermelodyBtn = document.getElementById('generateCountermelodyButton');
-        if (countermelodyBtn) {
-            countermelodyBtn.addEventListener('click', () => addTrackToMidiData('Countermelody', generateCountermelodyForSong(currentMidiData, helpers, sectionCache)));
-        }
-
-        const textureBtn = document.getElementById('generateTextureButton');
-        if (textureBtn) {
-            textureBtn.addEventListener('click', () => addTrackToMidiData('Texture', generateTextureForSong(currentMidiData, helpers, sectionCache)));
-        }
-
-        const dronesBtn = document.getElementById('generateDronesButton');
-        if (dronesBtn) {
-            dronesBtn.addEventListener('click', () => addTrackToMidiData('Drones', generateDronesForSong(currentMidiData, helpers, sectionCache)));
-        }
-
-        const ornamentBtn = document.getElementById('generateOrnamentButton');
-        if (ornamentBtn) {
-            ornamentBtn.addEventListener('click', () => addTrackToMidiData('Ornament', generateOrnamentForSong(currentMidiData, helpers, sectionCache)));
-        }
-
-        const miasmaticBtn = document.getElementById('generateMiasmaticButton');
-        if (miasmaticBtn) {
-            miasmaticBtn.addEventListener('click', () => addTrackToMidiData('Miasmatic', generateMiasmaticForSong(currentMidiData, helpers, sectionCache)));
-        }
-
-        const percussionBtn = document.getElementById('generatePercussionButton');
-        if (percussionBtn) {
-            percussionBtn.addEventListener('click', () => addTrackToMidiData('Percussion', generatePercussionForSong(currentMidiData, helpers, sectionCache)));
-        }
-
-        const glitchFxBtn = document.getElementById('generateGlitchFxButton');
-        if (glitchFxBtn) {
-            glitchFxBtn.addEventListener('click', () => addTrackToMidiData('GlitchFx', generateGlitchFxForSong(currentMidiData, helpers, sectionCache)));
-        }
-
-        const exportAllBtn = document.getElementById('exportAllButton');
-        if (exportAllBtn) {
-            exportAllBtn.addEventListener('click', () => handleExportAllTracks());
-        }
+        addListener('generateCountermelodyButton', () => addTrackToMidiData('Countermelody', generateCountermelodyForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
+        addListener('generateTextureButton', () => addTrackToMidiData('Texture', generateTextureForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
+        addListener('generateDronesButton', () => addTrackToMidiData('Drones', generateDronesForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
+        addListener('generateOrnamentButton', () => addTrackToMidiData('Ornament', generateOrnamentForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
+        addListener('generateMiasmaticButton', () => addTrackToMidiData('Miasmatic', generateMiasmaticForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
+        addListener('generatePercussionButton', () => addTrackToMidiData('Percussion', generatePercussionForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
+        addListener('generateGlitchFxButton', () => addTrackToMidiData('GlitchFx', generateGlitchFxForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
     };
 });
 
