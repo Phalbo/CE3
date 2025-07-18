@@ -141,53 +141,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Definisci attachActionListenersGlobal per essere chiamata dopo la generazione della UI
     window.attachActionListenersGlobal = function() {
-        const saveBtn = document.getElementById('saveSongButton');
-        if (saveBtn && typeof handleSaveSong === "function") {
-            saveBtn.onclick = handleSaveSong;
-        }
-
-        const singleTrackChordBtn = document.getElementById('downloadSingleTrackChordMidiButton');
-        if (singleTrackChordBtn && typeof handleGenerateSingleTrackChordMidi === "function") {
-            singleTrackChordBtn.onclick = handleGenerateSingleTrackChordMidi;
-        }
-
-        // Listener per il nuovo pulsante "Chords Rhythm"
-        const chordRhythmBtn = document.getElementById('generateChordRhythmButton'); // Usa il nuovo ID
-        if (chordRhythmBtn && typeof handleGenerateChordRhythm === "function") {
-            chordRhythmBtn.onclick = handleGenerateChordRhythm;
-        } else if(chordRhythmBtn) {
-            console.warn("handleGenerateChordRhythm function not found for 'Chords Rhythm' button.");
-        }
-
-        const melodyBtn = document.getElementById('generateMelodyButton');
-        if (melodyBtn && typeof handleGenerateMelody === "function") {
-            melodyBtn.onclick = handleGenerateMelody;
-        }
-
-        const vocalBtn = document.getElementById('generateVocalLineButton');
-        if (vocalBtn && typeof handleGenerateVocalLine === "function") {
-            vocalBtn.onclick = handleGenerateVocalLine;
-        }
-
-        const bassBtn = document.getElementById('generateBassLineButton');
-        if (bassBtn && typeof handleGenerateBassLine === "function") {
-            bassBtn.onclick = handleGenerateBassLine;
-        }
-
-        const drumBtn = document.getElementById('generateDrumTrackButton');
-        if (drumBtn && typeof handleGenerateDrumTrack === "function") {
-            drumBtn.onclick = handleGenerateDrumTrack;
-        }
-
-        document.querySelectorAll('.shape-select').forEach(selectElement => {
-            const newSelect = selectElement.cloneNode(true);
-            selectElement.parentNode.replaceChild(newSelect, selectElement);
-            if (typeof handleShapeChange === "function") { // handleShapeChange è in app-ui-render.js
-                newSelect.addEventListener('change', handleShapeChange);
+        const addListener = (id, handler) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('click', handler);
             }
-        });
+        };
 
-        // Listener per i nuovi generatori
+        addListener('saveSongButton', handleSaveSong);
+        addListener('downloadSingleTrackChordMidiButton', handleGenerateSingleTrackChordMidi);
+        addListener('generateChordRhythmButton', handleGenerateChordRhythm);
+        addListener('generateMelodyButton', handleGenerateMelody);
+        addListener('generateVocalLineButton', handleGenerateVocalLine);
+        addListener('generateBassLineButton', handleGenerateBassLine);
+        addListener('generateDrumTrackButton', handleGenerateDrumTrack);
+
         const helpers = {
             getChordNotes,
             NOTE_NAMES,
