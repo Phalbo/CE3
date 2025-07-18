@@ -224,27 +224,15 @@ button#generateButton:disabled {
   line-height: 1.3;
 }
 
-.timeline-section-card .section-card-chords-container {
-    margin-bottom: var(--space-xs);
-}
-
+.timeline-section-card .section-card-chords-container { margin-bottom: var(--space-xs); }
 .timeline-section-card .section-card-chords-label {
-    font-weight: bold;
-    font-size: 14px;
-    display: block;
-    margin-bottom: 2px;
-    opacity: 0.8;
-    color: inherit;
+  font-weight: bold; font-size: 14px; display: block;
+  margin-bottom: 2px; opacity: 0.8; color: inherit;
 }
-
 .timeline-section-card .section-card-chords {
-    font-family: var(--font-monospace);
-    font-size: 14px;
-    white-space: pre-wrap; /* Permette al testo di andare a capo */
-    word-break: normal;
-    line-height: 1.3;
-    color: inherit;
-    margin-bottom: var(--space-xs);
+  font-family: var(--font-monospace); font-size: 14px;
+  white-space: pre-wrap; word-break: normal; line-height: 1.3;
+  color: inherit; margin-bottom: var(--space-xs);
 }
 
 .timeline-section-card .section-bar-grid {

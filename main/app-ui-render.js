@@ -112,6 +112,8 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
 
     output += `<div class="song-sections-timeline" id="song-timeline-container">`;
     sections.forEach((sectionData, sectionIndex) => {
+        if (sectionData.measures === 0) return; // Non renderizzare sezioni a zero misure
+
         const cleanSectionNameForCssVar = getCleanSectionName(sectionData.name);
         const sectionTitleForDisplay = sectionData.name.replace(/-/g, ' ');
         const barCountActual = sectionData.measures;
@@ -138,7 +140,7 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
         const chordsString = sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0
             ? sectionData.mainChordSlots.map(slot => slot.chordName).join(' | ')
             : '(Instrumental/Silence)';
-        output += `      <div class="section-card-chords" data-chords="${chordsString}" data-has-chords="${!!(sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0)}">${chordsString}</div>`;
+        output += `      <div class="section-card-chords" data-chords="${chordsString}" data-has-chords="${!!(sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0)}"></div>`;
         output += `    </div>`;
         output += `    <div class="section-bars-label">${barCountActual} bars</div>`;
         output += `  </div>`;
@@ -174,38 +176,34 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
 
     songOutputDiv.innerHTML = output;
 
-    document.querySelectorAll('.timeline-section-card').forEach(card => {
-        const grid = card.querySelector('.section-bar-grid');
-        const chordsDiv = card.querySelector('.section-card-chords');
-        const chordsContainer = card.querySelector('.section-card-chords-container');
+    // Nuova logica per popolare dinamicamente i segmenti degli accordi
+    sections.forEach((sectionData, sectionIndex) => {
+        const sectionBody = document.getElementById(`section-body-${sectionIndex}`);
+        if (!sectionBody) return;
 
-        if (grid) {
-            const count = parseInt(grid.dataset.barCount, 10);
-            if (count > 0) {
-                grid.innerHTML = '';
-                for (let i = 0; i < count; i++) {
-                    const barSegment = document.createElement('div');
-                    barSegment.className = 'bar-segment';
-                    grid.appendChild(barSegment);
-                }
-            }
-        }
-        if (chordsDiv && chordsContainer) {
-            const chordString = chordsDiv.dataset.chords;
-            if (chordString && chordString.trim() !== '' && chordString !== '(No Chords)') {
-                const existingLabel = chordsContainer.querySelector('.section-card-chords-label');
-                if (existingLabel) existingLabel.remove();
+        sectionBody.innerHTML = ''; // Pulisce il contenitore
+        sectionBody.style.display = 'flex';
+        sectionBody.style.width = '100%';
+        sectionBody.style.height = '100%';
 
-                const label = document.createElement('div');
-                label.className = 'section-card-chords-label';
-                label.textContent = 'Chords:';
-                chordsContainer.insertBefore(label, chordsDiv);
-                chordsDiv.textContent = chordString;
-            } else {
-                chordsDiv.textContent = '(Instrumental/Silence)';
-                const existingLabel = chordsContainer.querySelector('.section-card-chords-label');
-                if (existingLabel) existingLabel.remove();
-            }
+        if (sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0) {
+            const totalTicksInSection = sectionData.measures * (4 / sectionData.timeSignature[1]) * TICKS_PER_QUARTER_NOTE_REFERENCE;
+
+            sectionData.mainChordSlots.forEach(chordSlot => {
+                const widthPercentage = (chordSlot.effectiveDurationTicks / totalTicksInSection) * 100;
+                const segment = document.createElement('div');
+                segment.className = 'chord-segment';
+                segment.style.width = `${widthPercentage}%`;
+                segment.textContent = chordSlot.chordName;
+                segment.title = `${chordSlot.chordName} (${(chordSlot.effectiveDurationTicks / (TICKS_PER_QUARTER_NOTE_REFERENCE * (4 / sectionData.timeSignature[1]))).toFixed(2)} beats)`;
+                sectionBody.appendChild(segment);
+            });
+        } else {
+            const segment = document.createElement('div');
+            segment.className = 'chord-segment instrumental-segment';
+            segment.style.width = '100%';
+            segment.textContent = '(Instrumental/Silence)';
+            sectionBody.appendChild(segment);
         }
     });
 

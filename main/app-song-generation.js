@@ -108,22 +108,44 @@ function generateChordsForSection(
     const phrygianBII = getChordFromModeAndDegree(keyRoot, 'Phrygian', 'bII');
     if(phrygianBII) rn['bII'] = phrygianBII;
 
-    // --- Inizio Nuova Logica di Calcolo Lunghezza ---
-    const sectionChordParams = SECTION_CHORD_TARGETS[cleanSectionNameForStyle] || SECTION_CHORD_TARGETS[getCleanSectionName(sectionName.split(" ")[0])] || SECTION_CHORD_TARGETS["default"];
+    // --- Inizio Blocco di Logica Definitivo ---
+    let targetBaseProgressionLength;
+    let minChords, maxChords;
 
-    // Assicura che min e max siano numeri validi, con un fallback
-    const minChords = typeof sectionChordParams.typicalMin === 'number' ? sectionChordParams.typicalMin : 2;
-    const maxChords = typeof sectionChordParams.typicalMax === 'number' ? sectionChordParams.typicalMax : 4;
-
-    // Calcola un numero intero casuale tra minChords e maxChords (inclusi)
-    let targetBaseProgressionLength = Math.floor(Math.random() * (maxChords - minChords + 1)) + minChords;
-
-    // Gestisce il caso speciale della sezione "silence"
-    if (cleanSectionNameForStyle === "silence") {
-        targetBaseProgressionLength = 0;
+    switch (cleanSectionNameForStyle) {
+        case 'intro':
+        case 'outro':
+        case 'bridge':
+            minChords = 1;
+            maxChords = 4;
+            break;
+        case 'verse':
+        case 'chorus':
+        case 'pre-chorus':
+        case 'head':
+            minChords = 2;
+            maxChords = 5;
+            break;
+        case 'solo':
+            minChords = 2;
+            maxChords = 4;
+            break;
+        case 'silence':
+            minChords = 0;
+            maxChords = 0;
+            break;
+        default:
+            minChords = 2;
+            maxChords = 4;
+            break;
     }
-    // --- Fine Nuova Logica di Calcolo Lunghezza ---
 
+    if (minChords === 0 && maxChords === 0) {
+        targetBaseProgressionLength = 0;
+    } else {
+        targetBaseProgressionLength = Math.floor(Math.random() * (maxChords - minChords + 1)) + minChords;
+    }
+    // --- Fine Blocco di Logica Definitivo ---
 
     // Fase 1: Nuova Libreria di Pattern Armonici
     const POP_PATTERNS = {
