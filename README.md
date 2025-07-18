@@ -1,14 +1,14 @@
-# CapricEngine v2.27
+# CapricEngine v2.28
 
-## Changelog (v2.27)
+## Changelog (v2.28)
 
-*   **Critical Bug Fixes & Stability Improvements:** This version addresses critical bugs that prevented the application from functioning correctly.
-    *   **Fixed `TypeError: ... is null`:** Resolved a critical timing issue where JavaScript event listeners were being attached before the HTML elements were available in the DOM. The `attachActionListenersGlobal` function is now called inside a `setTimeout` to ensure the DOM is fully rendered, restoring functionality to all action buttons.
-    *   **Pad Generator Restored:** The "Pad" generator button is now fully functional, as its event listener is no longer blocked by the timing error.
-    *   **Button Styles Restored:** Corrected the HTML structure and CSS to ensure all action buttons (both original and new) are displayed with the correct and consistent styling.
-*   **Code Simplification:**
-    *   Removed the experimental and unrequested multi-track export functionality (`Export All` button and related functions) to simplify the code and focus on core features.
-    *   Refactored the `addTrackToMidiData` helper to trigger direct single-track downloads, restoring the expected behavior for all new generator buttons.
+*   **Critical UI and Event Listener Fix:** This version provides a structural fix for a critical `TypeError` that prevented action buttons from being displayed and functioning.
+    *   **Dynamic Button Creation:** Reverted to a dynamic button creation model within `main/app-setup.js`. This resolves the timing issue where event listeners were attached before the DOM elements were available, ensuring all 14 generator buttons are now correctly rendered, styled, and functional.
+    *   **Correct Layout (7+7):** Implemented a responsive 7+7 button layout using two separate container divs, as requested.
+    *   **Pad Generator Restored:** The "Pad" generator is now fully operational.
+*   **Code Cleanup:**
+    *   Removed all experimental multi-track export logic and buttons.
+    *   Simplified the `addTrackToMidiData` helper to trigger direct single-track downloads, ensuring a consistent user experience across all generators.
 
 # CapricEngine v2.26
 
