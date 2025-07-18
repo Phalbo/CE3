@@ -410,20 +410,46 @@ async function generateSongArchitecture() {
             currentGlobalTickForTS += finalMeasures * beatsPerMeasureInSection * ticksPerBeatForThisSection;
         });
 
-        // --- FASE DI CREAZIONE DEI mainChordSlots (Logica Semplificata) ---
+        // --- FASE DI CREAZIONE DEI mainChordSlots (Logica Avanzata per Accordi Variabili) ---
         rawMidiSectionsData.forEach(sectionData => {
-            const ticksPerBar = (4 / sectionData.timeSignature[1]) * sectionData.timeSignature[0] * TICKS_PER_QUARTER_NOTE_REFERENCE;
+            if (sectionData.baseChords.length === 0 || sectionData.measures === 0) {
+                return; // Sezione vuota, non generare slot
+            }
 
-            for (let i = 0; i < sectionData.measures; i++) {
-                const chordIndex = Math.min(i, sectionData.baseChords.length - 1);
-                if (sectionData.baseChords.length > 0) {
+            const totalTicksInSection = sectionData.measures * (4 / sectionData.timeSignature[1]) * sectionData.timeSignature[0] * TICKS_PER_QUARTER_NOTE_REFERENCE;
+            const numChords = sectionData.baseChords.length;
+
+            // Calcola la durata di base per ogni accordo e la distribuzione dei resti
+            const baseDuration = Math.floor(totalTicksInSection / numChords);
+            let remainder = totalTicksInSection % numChords;
+
+            let currentTick = 0;
+            for (let i = 0; i < numChords; i++) {
+                let chordDuration = baseDuration;
+                // Distribuisci il resto equamente tra i primi accordi
+                if (remainder > 0) {
+                    chordDuration++;
+                    remainder--;
+                }
+
+                if (chordDuration > 0) {
                     sectionData.mainChordSlots.push({
-                        chordName: sectionData.baseChords[chordIndex],
-                        effectiveStartTickInSection: i * ticksPerBar,
-                        effectiveDurationTicks: ticksPerBar,
+                        chordName: sectionData.baseChords[i],
+                        effectiveStartTickInSection: currentTick,
+                        effectiveDurationTicks: chordDuration,
                         timeSignature: sectionData.timeSignature,
                         sectionStartTick: sectionData.startTick
                     });
+                }
+                currentTick += chordDuration;
+            }
+
+            // Fallback di sicurezza: se la durata totale non corrisponde, aggiusta l'ultimo accordo
+            if (sectionData.mainChordSlots.length > 0) {
+                const lastSlot = sectionData.mainChordSlots[sectionData.mainChordSlots.length - 1];
+                const calculatedTotalDuration = lastSlot.effectiveStartTickInSection + lastSlot.effectiveDurationTicks;
+                if (calculatedTotalDuration !== totalTicksInSection) {
+                    lastSlot.effectiveDurationTicks += (totalTicksInSection - calculatedTotalDuration);
                 }
             }
         });
