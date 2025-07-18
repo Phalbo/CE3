@@ -225,53 +225,26 @@ button#generateButton:disabled {
 }
 
 .timeline-section-card .section-card-chords-container {
-    display: flex;
-    width: 100%;
-    height: 30px; /* Altezza fissa per la riga degli accordi */
-    background-color: rgba(0,0,0,0.1);
-    border-radius: 3px;
-    overflow: hidden;
     margin-bottom: var(--space-xs);
 }
 
-.section-card-chord-slot {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    box-sizing: border-box;
-    border-right: 1px solid rgba(0,0,0,0.2);
+.timeline-section-card .section-card-chords-label {
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 2px;
+    opacity: 0.8;
+    color: inherit;
+}
+
+.timeline-section-card .section-card-chords {
     font-family: var(--font-monospace);
     font-size: 14px;
+    white-space: pre-wrap; /* Permette al testo di andare a capo */
+    word-break: normal;
+    line-height: 1.3;
     color: inherit;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0 4px;
-}
-
-.section-card-chord-slot:last-child {
-    border-right: none;
-}
-
-.section-card-chord-slot span {
-    display: inline-block;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Vecchie regole per .section-card-chords e label, potrebbero essere rimosse o mantenute per fallback */
-.timeline-section-card .section-card-chords-label {
-  font-weight: bold; font-size: 14px; display: block;
-  margin-bottom: 2px; opacity: 0.8; color: inherit;
-}
-.timeline-section-card .section-card-chords {
-  font-family: var(--font-monospace); font-size: 14px;
-  white-space: pre-wrap; word-break: normal; line-height: 1.3;
-  color: inherit; margin-bottom: var(--space-xs);
+    margin-bottom: var(--space-xs);
 }
 
 .timeline-section-card .section-bar-grid {

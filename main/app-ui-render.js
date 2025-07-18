@@ -135,21 +135,13 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
         output += `  <div class="section-card-header">${sectionTitleForDisplay}</div>`;
         output += `  <div class="section-card-body">`;
         output += `    <div class="section-card-chords-container">`;
-
-        if (sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0) {
-            const totalTicks = sectionData.measures * (4 / sectionData.timeSignature[1]) * TICKS_PER_QUARTER_NOTE_REFERENCE;
-            sectionData.mainChordSlots.forEach(slot => {
-                const widthPercentage = (slot.effectiveDurationTicks / totalTicks) * 100;
-                output += `<div class="section-card-chord-slot" style="width: ${widthPercentage}%;" title="${slot.chordName}"><span>${slot.chordName}</span></div>`;
-            });
-        } else {
-            output += `<div class="section-card-chords" data-has-chords="false">(Instrumental/Silence)</div>`;
-        }
-
+        const chordsString = sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0
+            ? sectionData.mainChordSlots.map(slot => slot.chordName).join(' | ')
+            : '(Instrumental/Silence)';
+        output += `      <div class="section-card-chords" data-chords="${chordsString}" data-has-chords="${!!(sectionData.mainChordSlots && sectionData.mainChordSlots.length > 0)}">${chordsString}</div>`;
         output += `    </div>`;
         output += `    <div class="section-bars-label">${barCountActual} bars</div>`;
         output += `  </div>`;
-        // La griglia delle barre rimane per riferimento visivo, ma gli accordi ora sono indipendenti
         output += `  <div class="section-bar-grid" data-bar-count="${barCountActual}"></div>`;
         output += `</div>`;
     });
