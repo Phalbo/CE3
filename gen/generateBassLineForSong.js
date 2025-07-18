@@ -139,43 +139,34 @@ function generateBassPhraseForSlot(context, lastEvent, helpers) {
     const rhythmPattern = selectedPattern.pattern;
 
     let currentTick = 0;
-    rhythmPattern.forEach((patternElement, index) => {
-        if (currentTick >= durationTicks) return;
+    while (currentTick < durationTicks) {
+        rhythmPattern.forEach((patternElement, index) => {
+            if (currentTick >= durationTicks) return;
 
-        const durationInTicks = patternElement.d * ticksPerBeat;
-        // Tronca la nota se sfora la durata dello slot
-        const actualDuration = Math.min(durationInTicks, durationTicks - currentTick);
+            const durationInTicks = patternElement.d * ticksPerBeat;
+            const actualDuration = Math.min(durationInTicks, durationTicks - currentTick);
 
-        if (actualDuration <= 0) return;
+            if (actualDuration <= 0) return;
 
-        if (patternElement.p !== 'rest') {
-            let pitch = getPitchFromSymbol(patternElement.p, {
-                chordName,
-                lastNote: phraseEvents.length > 0 ? phraseEvents[phraseEvents.length - 1] : lastEvent,
-                songData,
-                helpers
-            });
+            if (patternElement.p !== 'rest') {
+                let pitch = getPitchFromSymbol(patternElement.p, {
+                    chordName,
+                    lastNote: phraseEvents.length > 0 ? phraseEvents[phraseEvents.length - 1] : lastEvent,
+                    songData,
+                    helpers
+                });
 
-            pitch = Math.max(BASS_PARAMS.PITCH_RANGE.min, Math.min(BASS_PARAMS.PITCH_RANGE.max, pitch));
+                pitch = Math.max(BASS_PARAMS.PITCH_RANGE.min, Math.min(BASS_PARAMS.PITCH_RANGE.max, pitch));
 
-            phraseEvents.push({
-                pitch: [pitch],
-                duration: `T${Math.round(actualDuration)}`,
-                // context.startTick contiene già il tick di inizio assoluto dello slot.
-                // Aggiungiamo il tick relativo all'interno dello slot per ottenere la posizione finale.
-                startTick: context.startTick + currentTick,
-                velocity: 75 + Math.floor(Math.random() * 10)
-            });
-        }
-        currentTick += actualDuration;
-    });
-
-    // Se il pattern non ha riempito l'intero slot, allunga l'ultima nota
-    if (currentTick < durationTicks && phraseEvents.length > 0) {
-        const lastNote = phraseEvents[phraseEvents.length - 1];
-        const lastNoteDuration = parseInt(lastNote.duration.substring(1), 10);
-        const remainingTicks = durationTicks - currentTick;
-        lastNote.duration = `T${lastNoteDuration + remainingTicks}`;
+                phraseEvents.push({
+                    pitch: [pitch],
+                    duration: `T${Math.round(actualDuration)}`,
+                    startTick: context.startTick + currentTick,
+                    velocity: 75 + Math.floor(Math.random() * 10)
+                });
+            }
+            currentTick += actualDuration;
+        });
     }
 
     return phraseEvents;

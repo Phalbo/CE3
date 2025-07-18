@@ -80,8 +80,27 @@
       </form>
     </section>
 
-    <section id="song-output-container" class="main-content-section"> <div id="songOutput">
+    <section id="song-output-container" class="main-content-section">
+      <div id="songOutput">
         <p><em>Premi "Generate" per creare la tua bozza...</em></p>
+      </div>
+      <div class="action-buttons-container" id="action-buttons" style="display: none;">
+        <button id="saveSongButton" class="action-button">Save Song Data</button>
+        <button id="downloadSingleTrackChordMidiButton" class="action-button">Pad</button>
+        <button id="generateChordRhythmButton" class="action-button">Arpeggiator</button>
+        <button id="generateMelodyButton" class="action-button">Inspiration (Melody)</button>
+        <button id="generateVocalLineButton" class="action-button">Vocal Shame Machine</button>
+        <button id="generateBassLineButton" class="action-button">Deekonizer (bass)</button>
+        <button id="generateDrumTrackButton" class="action-button">LingoStarr (drum)</button>
+      </div>
+      <div class="new-generators-section">
+        <button id="generateCountermelodyButton" class="action-button" style="display: none;">Countermelody</button>
+        <button id="generateTextureButton" class="action-button" style="display: none;">Texture</button>
+        <button id="generateOrnamentButton" class="action-button" style="display: none;">Ornament</button>
+        <button id="generateMiasmaticButton" class="action-button" style="display: none;">Miasmatic</button>
+        <button id="generateDronesButton" class="action-button" style="display: none;">Drones</button>
+        <button id="generatePercussionButton" class="action-button" style="display: none;">Percussion</button>
+        <button id="generateGlitchFxButton" class="action-button" style="display: none;">Glitch fx</button>
       </div>
     </section>
   </main>
@@ -114,6 +133,13 @@
 <script src="gen/generateBassLineForSong.js"></script>
 <script src="gen/generateVocalLineForSong.js"></script>
 <script src="gen/generateDrumTrackForSong.js"></script>
+<script src="gen/generateCountermelodyForSong.js"></script>
+<script src="gen/generateTextureForSong.js"></script>
+<script src="gen/generateDronesForSong.js"></script>
+<script src="gen/generateOrnamentForSong.js"></script>
+<script src="gen/generateMiasmaticForSong.js"></script>
+<script src="gen/generatePercussionForSong.js"></script>
+<script src="gen/generateGlitchFxForSong.js"></script>
 
 <!-- MAIN LOGIC -->
 <script src="main/app-song-generation.js"></script>
