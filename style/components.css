@@ -479,9 +479,9 @@ button#generateDrumsMidiButton:hover { background-color: var(--btn-drums-hover-b
 }
 
 /* === ACTION BUTTONS === */
-.action-buttons-container {
+.action-buttons-container, .new-generators-section {
     display: flex;
-    flex-wrap: nowrap; 
+    flex-wrap: wrap;
     justify-content: center;
     gap: var(--space-xs); 
     margin-top: var(--space-lg); 
