@@ -1,10 +1,40 @@
 // gen/generatePercussionForSong.js
-const PERC_MIDI_NOTES = { Kick: 36, Snare: 38, HiHat: 42 };
+// NUOVA MAPPA MIDI PER LE PERCUSSIONI
+const PERC_MIDI_NOTES = {
+    HighBongo: 60,
+    LowBongo: 61,
+    MuteHiConga: 62,
+    OpenHiConga: 63,
+    LowConga: 64,
+    Tambourine: 54,
+    Maracas: 70,
+    HandClap: 39,
+    Shaker: 82 // Nota: Lo Shaker è un'estensione comune, potrebbe non essere in tutti i synth
+};
+
+// NUOVI PATTERN RITMICI PER LE PERCUSSIONI
 const PERC_PATTERNS = {
     '4/4': [
-        { name: 'Rock', weight: 40, pattern: [{p: 'Kick', b: 1}, {p: 'Snare', b: 3}, {p: 'HiHat', b: [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]}] },
-        { name: 'Funk', weight: 30, pattern: [{p: 'Kick', b: [1, 3.5]}, {p: 'Snare', b: 3}, {p: 'HiHat', b: [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]}] },
-        { name: 'Latin', weight: 30, pattern: [{p: 'Kick', b: [1, 2.5, 4]}, {p: 'Snare', b: 3, type:'rimshot'}, {p: 'HiHat', b: [1, 2, 3, 4]}] }
+        {
+            name: 'LatinGroove', weight: 40, pattern: [
+                { p: 'Maracas', b: [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5] }, // Maracas costanti
+                { p: 'LowConga', b: [2, 4.5] },
+                { p: 'OpenHiConga', b: [1, 3] }
+            ]
+        },
+        {
+            name: 'PopGroove', weight: 40, pattern: [
+                { p: 'Tambourine', b: [2, 4] },
+                { p: 'HandClap', b: [3] },
+                { p: 'Shaker', b: [1.5, 2.5, 3.5, 4.5] } // Shaker sincopato
+            ]
+        },
+        {
+            name: 'BongoGroove', weight: 20, pattern: [
+                { p: 'HighBongo', b: [1, 2.5, 4] },
+                { p: 'LowBongo', b: [1.5, 3] }
+            ]
+        }
     ]
 };
 

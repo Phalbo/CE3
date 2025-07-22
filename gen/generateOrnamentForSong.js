@@ -18,29 +18,23 @@ const ORNAMENTS = {
     }
 };
 
-function generateOrnamentForSong(songData, helpers, sectionCache) {
+function generateOrnamentForSong(songData, helpers) {
+    console.log("Ornament Generator: Avviato."); // LOG 1
     const track = [];
     const { getChordNotes, NOTE_NAMES, normalizeSectionName } = helpers;
 
-    if (!sectionCache.ornament) {
-        sectionCache.ornament = {};
-    }
-
     songData.sections.forEach(section => {
-        const baseName = normalizeSectionName(section.name);
-        if (sectionCache.ornament[baseName]) {
-            const cachedSection = sectionCache.ornament[baseName];
-            cachedSection.forEach(event => {
-                track.push({ ...event, startTick: event.startTick + section.startTick });
-            });
-            return;
-        }
-
-        const sectionTrack = [];
         section.mainChordSlots.forEach(slot => {
             if (Math.random() < 0.15) {
-                const ornamentType = Math.random() < 0.5 ? 'trill' : 'graceNote';
+                console.log("Ornament Generator: Tentativo di generare ornamento per lo slot:", slot.chordName); // LOG 2
                 const chordNotes = getChordNotes(slot.chordName).notes;
+
+                if (!chordNotes || chordNotes.length === 0) {
+                     console.error("Ornament Generator: Fallito. Nessuna nota trovata per l'accordo:", slot.chordName); // LOG 3
+                     return; // Esce se non trova note
+                }
+
+                const ornamentType = Math.random() < 0.5 ? 'trill' : 'graceNote';
                 const targetNote = chordNotes[1] || chordNotes[0];
                 if (!targetNote) return;
 
@@ -48,14 +42,11 @@ function generateOrnamentForSong(songData, helpers, sectionCache) {
                 const ornamentStartTick = (slot.effectiveStartTickInSection + slot.effectiveDurationTicks) - 64;
 
                 const ornamentEvents = ORNAMENTS[ornamentType](pitch, ornamentStartTick, helpers);
-                sectionTrack.push(...ornamentEvents);
+                track.push(...ornamentEvents);
+                console.log(`Ornament Generator: Ornamento '${ornamentType}' creato con successo.`); // LOG 4
             }
         });
-
-        sectionCache.ornament[baseName] = sectionTrack;
-        sectionTrack.forEach(event => {
-            track.push({ ...event, startTick: event.startTick + section.startTick });
-        });
     });
+    console.log("Ornament Generator: Processo completato. Eventi totali:", track.length); // LOG 5
     return track;
 }
