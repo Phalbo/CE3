@@ -1,4 +1,3 @@
-
 // File: app-setup.js - v1.34
 // Responsabile dell'impostazione iniziale, creazione UI dinamica, listeners principali.
 
@@ -93,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         addListener('saveSongButton', handleSaveSong);
-        addListener('downloadSingleTrackChordMidiButton', handleGenerateSingleTrackChordMidi);
+        addListener('downloadSingleTrackChordMidiButton', handleGeneratePad);
         addListener('generateChordRhythmButton', handleGenerateChordRhythm);
         addListener('generateMelodyButton', handleGenerateMelody);
         addListener('generateVocalLineButton', handleGenerateVocalLine);
@@ -102,9 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addListener('generateCountermelodyButton', () => addTrackToMidiData('Countermelody', generateCountermelodyForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
         addListener('generateTextureButton', () => addTrackToMidiData('Texture', generateTextureForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
-        addListener('generateDronesButton', () => addTrackToMidiData('Drones', generateDronesForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
         addListener('generateOrnamentButton', () => addTrackToMidiData('Ornament', generateOrnamentForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
         addListener('generateMiasmaticButton', () => addTrackToMidiData('Miasmatic', generateMiasmaticForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
+        addListener('generateDronesButton', () => addTrackToMidiData('Drones', generateDronesForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
         addListener('generatePercussionButton', () => addTrackToMidiData('Percussion', generatePercussionForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
         addListener('generateGlitchFxButton', () => addTrackToMidiData('GlitchFx', generateGlitchFxForSong(currentMidiData, { getChordNotes, NOTE_NAMES, normalizeSectionName, getRandomElement, getPitchFromSymbol, getChordRootAndType, getDiatonicChords }, sectionCache)));
     };

@@ -483,9 +483,9 @@ button#generateDrumsMidiButton:hover { background-color: var(--btn-drums-hover-b
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: var(--space-xs); 
-    margin-top: var(--space-lg); 
-    padding-bottom: var(--space-md); 
+    gap: var(--space-xs);
+    margin-top: var(--space-lg);
+    padding-bottom: var(--space-md);
     overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--accent-primary-hover) var(--bg-tertiary);
@@ -495,8 +495,8 @@ button#generateDrumsMidiButton:hover { background-color: var(--btn-drums-hover-b
 .action-buttons-container::-webkit-scrollbar-thumb { background-color: var(--accent-primary-hover); border-radius: 4px; }
 
 .action-buttons-container button {
-  padding: var(--space-xs) var(--space-sm); 
-  font-size: 0.85em; 
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 0.85em;
   font-family: var(--font-headings);
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -504,13 +504,13 @@ button#generateDrumsMidiButton:hover { background-color: var(--btn-drums-hover-b
   border-radius: var(--border-radius-sm);
   cursor: pointer;
   transition: var(--transition-std);
-  border: 2px solid transparent; 
+  border: 2px solid transparent;
   box-shadow: var(--box-shadow-md);
-  min-width: 135px; 
-  max-width: 160px; 
+  min-width: 135px;
+  max-width: 160px;
   text-align: center;
   flex-shrink: 0;
-  
+
   /* color gestito per singolo pulsante */
 }
 .action-buttons-container button:hover { transform: translateY(-3px); box-shadow: var(--box-shadow-lg); filter: brightness(1.15); }
@@ -532,10 +532,10 @@ button#generateBassLineButton { background-color: var(--btn-bass-bg); color: var
 button#generateBassLineButton:hover { background-color: var(--btn-bass-hover-bg); }
 button#generateDrumTrackButton { background-color: var(--btn-drums-bg); color: var(--text-on-accent-dark); border-color: var(--btn-drums-hover-bg); }
 button#generateDrumTrackButton:hover { background-color: var(--btn-drums-hover-bg); }
-.action-buttons-container button:disabled { 
-  background-color: var(--btn-disabled-bg) !important; color: var(--btn-disabled-text) !important; 
-  cursor: not-allowed; transform: none; box-shadow: none; 
-  border-color: var(--btn-disabled-bg) !important; filter: saturate(0.5); 
+.action-buttons-container button:disabled {
+  background-color: var(--btn-disabled-bg) !important; color: var(--btn-disabled-text) !important;
+  cursor: not-allowed; transform: none; box-shadow: none;
+  border-color: var(--btn-disabled-bg) !important; filter: saturate(0.5);
 }
 
 button#generateCountermelodyButton { background-color: var(--btn-countermelody-bg); color: var(--text-on-accent-dark); border-color: var(--btn-countermelody-hover-bg); }
