@@ -81,27 +81,25 @@ function downloadSingleTrackMidi(trackName, midiEvents, fileName, bpm) {
         return;
     }
 
-    const instrumentConfig = INSTRUMENT_MAP[trackName] || { program: 0, channel: 1 };
     const track = new MidiWriter.Track();
-
     track.setTempo(bpm);
 
-    // --- FIX #1: Ripristina il nome completo della traccia ---
+    // --- NUOVA LOGICA SEMPLIFICATA ---
+
+    // 1. Il nome della traccia ora include il titolo della canzone
     const fullTrackName = `${trackName} for ${currentMidiData.title}`;
     track.addTrackName(fullTrackName);
 
-    // --- FIX #2: Assegna il Program Change al canale corretto ---
-    if (instrumentConfig.channel !== 10) {
-        track.addEvent(new MidiWriter.ProgramChangeEvent({
-            instrument: instrumentConfig.program
-        }), { channel: instrumentConfig.channel }); // Specifica il canale QUI
+    // 2. Scegli il canale: 10 per percussioni, 1 per tutto il resto.
+    let targetChannel = 1;
+    if (trackName === 'Drums' || trackName === 'Percussion') {
+        targetChannel = 10;
     }
 
-    const timeSignatureChanges = currentMidiData.timeSignatureChanges || [{tick: 0, ts: [4,4]}];
-    timeSignatureChanges.forEach(tsEvent => {
-        track.addEvent(new MidiWriter.TimeSignatureEvent(tsEvent.ts[0], tsEvent.ts[1]), {tick: Math.round(tsEvent.tick)});
-    });
+    // 3. RIMUOVE TUTTI I PROGRAM CHANGE. L'utente assegnerà gli strumenti nella DAW.
+    // Questo è il fix cruciale per eliminare la traccia vuota sul canale 1.
 
+    // 4. Aggiunge gli eventi delle note, assicurandosi che il canale sia corretto
     midiEvents.forEach(event => {
         if (!event || typeof event.pitch === 'undefined' || !event.duration || typeof event.startTick === 'undefined') return;
 
@@ -110,7 +108,7 @@ function downloadSingleTrackMidi(trackName, midiEvents, fileName, bpm) {
             duration: typeof event.duration === 'string' ? event.duration : `T${Math.round(event.duration)}`,
             startTick: Math.round(event.startTick),
             velocity: event.velocity || 80,
-            channel: instrumentConfig.channel // Usa il canale corretto dalla mappa
+            channel: targetChannel // Usa il canale semplice che abbiamo appena deciso
         };
 
         if (noteEventArgs.pitch.length > 0) {
