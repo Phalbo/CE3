@@ -79,10 +79,12 @@ function navigateShape(fundamentalChordName, direction) {
  */
 async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, mainScaleText, mainScaleParsedNotes, mainScaleParsedRoot, mainScaleParsedName) {
     const songOutputDiv = document.getElementById('songOutput');
-    if (!songOutputDiv) {
-        console.error("Element 'songOutput' not found in DOM.");
+    const actionButtonsContainer = document.getElementById('action-buttons');
+    if (!songOutputDiv || !actionButtonsContainer) {
+        console.error("Element 'songOutput' or 'action-buttons' not found in DOM.");
         return;
     }
+    actionButtonsContainer.innerHTML = '';
 
     const dependencies = {
         getCleanSectionName, normalizeChordNameToSharps, getChordRootAndType,
