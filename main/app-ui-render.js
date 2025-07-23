@@ -84,7 +84,29 @@ async function renderSongOutput(songData, allGeneratedChordsSet, styleNote, main
         console.error("Element 'songOutput' or 'action-buttons' not found in DOM.");
         return;
     }
-    actionButtonsContainer.innerHTML = '';
+    actionButtonsContainer.innerHTML = `
+        <h3 class="chord-glossary-title section-header-title">
+            download your global hit in MIDI format<br>
+        </h3>
+        <div id="generator-row-1" class="button-container">
+          <button id="saveSongButton" class="action-button">Save Song Data</button>
+          <button id="downloadSingleTrackChordMidiButton" class="action-button">Pad</button>
+          <button id="generateChordRhythmButton" class="action-button">Arpeggiator</button>
+          <button id="generateMelodyButton" class="action-button">Inspiration (Melody)</button>
+          <button id="generateVocalLineButton" class="action-button">Vocal Shame Machine</button>
+          <button id="generateBassLineButton" class="action-button">Deekonizer (bass)</button>
+          <button id="generateDrumTrackButton" class="action-button">LingoStarr (drum)</button>
+        </div>
+        <div id="generator-row-2" class="button-container">
+          <button id="generateCountermelodyButton" class="action-button">Countermelody</button>
+          <button id="generateTextureButton" class="action-button">Texture</button>
+          <button id="generateOrnamentButton" class="action-button">Ornament</button>
+          <button id="generateMiasmaticButton" class="action-button">Miasmatic</button>
+          <button id="generateDronesButton" class="action-button">Drones</button>
+          <button id="generatePercussionButton" class="action-button">Percussion</button>
+          <button id="generateGlitchFxButton" class="action-button">Glitch fx</button>
+        </div>
+    `;
 
     const dependencies = {
         getCleanSectionName, normalizeChordNameToSharps, getChordRootAndType,
