@@ -19,7 +19,12 @@ function generateTextureForSong(songData, helpers, sectionCache) {
 
         const sectionTrack = [];
         section.mainChordSlots.forEach(slot => {
-            let chordNotes = getChordNotes(slot.chordName).notes;
+            const chordNotesResult = getChordNotes(slot.chordName);
+            let chordNotes = chordNotesResult ? chordNotesResult.notes : [];
+            if (!chordNotes || chordNotes.length === 0) {
+                console.warn(`Skipping slot for ${slot.chordName}: No chord notes found.`);
+                return;
+            }
             if (chordNotes.length < 3) return;
 
             // Apply inversion

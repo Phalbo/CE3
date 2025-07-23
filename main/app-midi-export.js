@@ -109,8 +109,8 @@ function downloadSingleTrackMidi(trackName, midiEvents, fileName, bpm, timeSigna
                 startTick: Math.round(event.startTick),
                 velocity: event.velocity || (isDrumTrack ? 90 : 70),
             };
-            if (trackName === 'Percussion' || trackName === 'Drums') {
-                noteEventArgs.channel = 10; // FORZA IL CANALE 10
+            if (trackName === 'Percussion' || trackName === 'Drums' || trackName === 'Drum Track') {
+                noteEventArgs.channel = 10;
             }
             if (noteEventArgs.pitch.length === 0) return;
 

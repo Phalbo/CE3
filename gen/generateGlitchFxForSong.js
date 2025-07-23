@@ -32,6 +32,9 @@ function generateGlitchFxForSong(songData, helpers, sectionCache) {
     const track = [];
     const { getChordNotes, NOTE_NAMES, getRandomElement, normalizeSectionName } = helpers;
     const ticksPerMeasure44 = 128 * 4;
+    const scaleNotes = songData.mainScaleNotes;
+
+    if (!scaleNotes || scaleNotes.length === 0) return [];
 
     if (!sectionCache.glitch) {
         sectionCache.glitch = {};
@@ -52,17 +55,10 @@ function generateGlitchFxForSong(songData, helpers, sectionCache) {
         for (let m = 0; m < section.measures; m++) {
             if (Math.random() < 0.25) {
                 const effectName = getRandomElement(Object.keys(GLITCH_EFFECTS));
-                const chordAtTime = section.mainChordSlots.find(slot => totalTicks >= slot.effectiveStartTickInSection && totalTicks < (slot.effectiveStartTickInSection + slot.effectiveDurationTicks));
-
-                if (chordAtTime) {
-                    const chordNotes = getChordNotes(chordAtTime.chordName).notes;
-                    if(chordNotes && chordNotes.length > 0){
-                        const note = getRandomElement(chordNotes);
-                        const pitch = NOTE_NAMES.indexOf(note) + 60;
-                        const effectEvents = GLITCH_EFFECTS[effectName](pitch, totalTicks);
-                        sectionTrack.push(...effectEvents);
-                    }
-                }
+                const randomNoteName = getRandomElement(scaleNotes);
+                const pitch = NOTE_NAMES.indexOf(randomNoteName) + 60;
+                const effectEvents = GLITCH_EFFECTS[effectName](pitch, totalTicks);
+                sectionTrack.push(...effectEvents);
             }
             totalTicks += ticksPerMeasure44;
         }
