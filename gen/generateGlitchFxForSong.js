@@ -16,12 +16,21 @@ const GLITCH_EFFECTS = {
     },
     gate: (pitch, startTick) => {
          return [{ pitch: [pitch], duration: 'T32', startTick: startTick, velocity: 100 }, { pitch: [pitch], duration: 'T32', startTick: startTick + 128, velocity: 100 }];
+    },
+    tapeStop: (pitch, startTick) => {
+        return [{ pitch: [pitch], duration: 'T128', startTick: startTick, velocity: 100, pitchBend: -4096 }];
+    },
+    reverse: (pitch, startTick) => {
+        return [
+            { pitch: [pitch], duration: 'T16', startTick: startTick, velocity: 50 },
+            { pitch: [pitch], duration: 'T112', startTick: startTick + 16, velocity: 120 }
+        ];
     }
 };
 
 function generateGlitchFxForSong(songData, helpers, sectionCache) {
     const track = [];
-    const { getChordRootAndType, NOTE_NAMES, getRandomElement, normalizeSectionName } = helpers;
+    const { getChordNotes, NOTE_NAMES, getRandomElement, normalizeSectionName } = helpers;
     const ticksPerMeasure44 = 128 * 4;
 
     if (!sectionCache.glitch) {
@@ -46,10 +55,13 @@ function generateGlitchFxForSong(songData, helpers, sectionCache) {
                 const chordAtTime = section.mainChordSlots.find(slot => totalTicks >= slot.effectiveStartTickInSection && totalTicks < (slot.effectiveStartTickInSection + slot.effectiveDurationTicks));
 
                 if (chordAtTime) {
-                    const { root } = getChordRootAndType(chordAtTime.chordName);
-                    const pitch = NOTE_NAMES.indexOf(root) + 60;
-                    const effectEvents = GLITCH_EFFECTS[effectName](pitch, totalTicks);
-                    sectionTrack.push(...effectEvents);
+                    const chordNotes = getChordNotes(chordAtTime.chordName).notes;
+                    if(chordNotes && chordNotes.length > 0){
+                        const note = getRandomElement(chordNotes);
+                        const pitch = NOTE_NAMES.indexOf(note) + 60;
+                        const effectEvents = GLITCH_EFFECTS[effectName](pitch, totalTicks);
+                        sectionTrack.push(...effectEvents);
+                    }
                 }
             }
             totalTicks += ticksPerMeasure44;

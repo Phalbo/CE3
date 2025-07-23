@@ -1,6 +1,6 @@
 // gen/generateMiasmaticForSong.js
 const MIASMA_RIFFS = [
-    // Formato: { p: 'grado', d: durata_in_beat }
+    // Original patterns
     [{p:'R',d:0.5},{p:'b3',d:0.5},{p:'4',d:1},{p:'rest',d:1}],
     [{p:'5',d:0.5},{p:'4',d:0.5},{p:'b3',d:0.5},{p:'R',d:0.5}],
     [{p:'R',d:0.25},{p:'R',d:0.25},{p:'b3',d:0.5},{p:'rest',d:1}],
@@ -15,7 +15,18 @@ const MIASMA_RIFFS = [
     [{p:'b3',d:0.5},{p:'rest',d:1},{p:'4',d:0.5}],
     [{p:'R',d:0.25},{p:'b2',d:0.25},{p:'R',d:0.25},{p:'b2',d:0.25},{p:'R',d:1}],
     [{p:'5',d:1},{p:'b5',d:0.5},{p:'4',d:0.5}],
-    [{p:'R',d:0.5},{p:'R8',d:0.5},{p:'b7',d:0.5},{p:'5',d:0.5}]
+    [{p:'R',d:0.5},{p:'R8',d:0.5},{p:'b7',d:0.5},{p:'5',d:0.5}],
+    // New syncopated and expressive patterns
+    [{p:'rest',d:0.5},{p:'R',d:0.5},{p:'b3',d:0.5},{p:'4',d:0.5}],
+    [{p:'R',d:0.25},{p:'rest',d:0.25},{p:'b3',d:0.5},{p:'rest',d:0.5},{p:'4',d:0.5}],
+    [{p:'5',d:0.75},{p:'b5',d:0.25},{p:'4',d:1}],
+    [{p:'b7',d:0.5},{p:'R8',d:1},{p:'b7',d:0.5}],
+    [{p:'R',d:0.5},{p:'b2',d:0.5},{p:'b3',d:1}],
+    [{p:'R',d:0.25},{p:'rest',d:0.75},{p:'5',d:1}],
+    [{p:'4',d:0.5},{p:'b5',d:0.5},{p:'5',d:0.5},{p:'b5',d:0.5}],
+    [{p:'b3',d:0.25},{p:'rest',d:0.25},{p:'b3',d:0.25},{p:'rest',d:0.25},{p:'b3',d:1}],
+    [{p:'R8',d:1},{p:'b7',d:0.5},{p:'5',d:0.5}],
+    [{p:'R',d:0.5},{p:'b3',d:0.5},{p:'4',d:0.5},{p:'5',d:0.5}]
 ];
 
 function generateMiasmaticForSong(songData, helpers, sectionCache) {

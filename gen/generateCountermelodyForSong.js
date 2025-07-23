@@ -2,7 +2,7 @@
 function generateCountermelodyForSong(songData, helpers, sectionCache) {
     const track = [];
     const { getChordNotes, NOTE_NAMES, normalizeSectionName } = helpers;
-    const ticksPerBeat = (4 / 4) * 128; // Assumiamo 4/4 per la ritmica interna
+    const ticksPerEighth = 64; // Durata di un ottavo
 
     if (!sectionCache.countermelody) {
         sectionCache.countermelody = {};
@@ -19,27 +19,36 @@ function generateCountermelodyForSong(songData, helpers, sectionCache) {
         }
 
         const sectionTrack = [];
-        section.mainChordSlots.forEach((slot, slotIndex) => {
+        section.mainChordSlots.forEach((slot) => {
             const chordNotes = getChordNotes(slot.chordName).notes;
             if (chordNotes.length < 3) return;
 
-            const rootPitch = NOTE_NAMES.indexOf(chordNotes[0]) + 48;
-            const thirdPitch = NOTE_NAMES.indexOf(chordNotes[1]) + 48;
-            const fifthPitch = NOTE_NAMES.indexOf(chordNotes[2]) + 48;
+            const pitches = chordNotes.map(n => NOTE_NAMES.indexOf(n) + 60);
+            if (chordNotes.length > 3) {
+                pitches.push(NOTE_NAMES.indexOf(chordNotes[3]) + 60); // Add seventh
+            }
 
-            const pattern = (slotIndex % 2 === 0)
-                ? [rootPitch, thirdPitch, fifthPitch, thirdPitch]
-                : [fifthPitch, thirdPitch, rootPitch, thirdPitch];
+            const patterns = [
+                [0, 1, 2, 1], // Arpeggio ascendente
+                [2, 1, 0, 1], // Arpeggio discendente
+                [0, 2, 1, 3], // Arpeggio con settima
+                [0, 1, 2, 3, 2, 1, 0] // Scala completa
+            ];
 
-            for (let i = 0; i < pattern.length; i++) {
-                const noteStartTick = slot.effectiveStartTickInSection + (i * ticksPerBeat);
+            const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
+
+            for (let i = 0; i < slot.effectiveDurationTicks / ticksPerEighth; i++) {
+                const noteStartTick = slot.effectiveStartTickInSection + (i * ticksPerEighth);
                 if (noteStartTick < (slot.effectiveStartTickInSection + slot.effectiveDurationTicks)) {
-                    sectionTrack.push({
-                        pitch: [pattern[i]],
-                        duration: `T${ticksPerBeat}`,
-                        startTick: noteStartTick,
-                        velocity: 65 + Math.floor(Math.random() * 10)
-                    });
+                    const pitchIndex = selectedPattern[i % selectedPattern.length];
+                    if(pitches[pitchIndex]){
+                        sectionTrack.push({
+                            pitch: [pitches[pitchIndex]],
+                            duration: `T${ticksPerEighth}`,
+                            startTick: noteStartTick,
+                            velocity: 70 + Math.floor(Math.random() * 15)
+                        });
+                    }
                 }
             }
         });

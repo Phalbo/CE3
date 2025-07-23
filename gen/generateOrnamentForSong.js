@@ -2,18 +2,40 @@
 const ORNAMENTS = {
     trill: (pitch, startTick, helpers) => {
         const ticksPer32nd = 16; // Durata di una biscroma
+        const velocity = 80 + Math.floor(Math.random() * 20);
         return [
-            { pitch: [pitch], duration: `T${ticksPer32nd}`, startTick: startTick, velocity: 85 },
-            { pitch: [pitch + 2], duration: `T${ticksPer32nd}`, startTick: startTick + ticksPer32nd, velocity: 85 },
-            { pitch: [pitch], duration: `T${ticksPer32nd}`, startTick: startTick + ticksPer32nd * 2, velocity: 85 },
-            { pitch: [pitch + 2], duration: `T${ticksPer32nd}`, startTick: startTick + ticksPer32nd * 3, velocity: 85 }
+            { pitch: [pitch], duration: `T${ticksPer32nd}`, startTick: startTick, velocity: velocity },
+            { pitch: [pitch + 2], duration: `T${ticksPer32nd}`, startTick: startTick + ticksPer32nd, velocity: velocity },
+            { pitch: [pitch], duration: `T${ticksPer32nd}`, startTick: startTick + ticksPer32nd * 2, velocity: velocity },
+            { pitch: [pitch + 2], duration: `T${ticksPer32nd}`, startTick: startTick + ticksPer32nd * 3, velocity: velocity }
         ];
     },
     graceNote: (pitch, startTick, helpers) => {
         const ticksPer64th = 8; // Durata cortissima
+        const velocity = 80 + Math.floor(Math.random() * 20);
         return [
-            { pitch: [pitch - 3], duration: `T${ticksPer64th}`, startTick: startTick, velocity: 90 },
-            { pitch: [pitch], duration: `T${ticksPer64th * 3}`, startTick: startTick + ticksPer64th, velocity: 80 }
+            { pitch: [pitch - 3], duration: `T${ticksPer64th}`, startTick: startTick, velocity: velocity + 10 },
+            { pitch: [pitch], duration: `T${ticksPer64th * 3}`, startTick: startTick + ticksPer64th, velocity: velocity }
+        ];
+    },
+    mordent: (pitch, startTick, helpers) => {
+        const ticksPer32nd = 16;
+        const velocity = 80 + Math.floor(Math.random() * 20);
+        return [
+            { pitch: [pitch], duration: `T${ticksPer32nd}`, startTick: startTick, velocity: velocity },
+            { pitch: [pitch - 2], duration: `T${ticksPer32nd}`, startTick: startTick + ticksPer32nd, velocity: velocity - 10 },
+            { pitch: [pitch], duration: `T${ticksPer32nd}`, startTick: startTick + ticksPer32nd * 2, velocity: velocity },
+        ];
+    },
+    gruppetto: (pitch, startTick, helpers) => {
+        const ticksPer64th = 8;
+        const velocity = 80 + Math.floor(Math.random() * 20);
+        return [
+            { pitch: [pitch], duration: `T${ticksPer64th}`, startTick: startTick, velocity: velocity },
+            { pitch: [pitch + 2], duration: `T${ticksPer64th}`, startTick: startTick + ticksPer64th, velocity: velocity - 5 },
+            { pitch: [pitch], duration: `T${ticksPer64th}`, startTick: startTick + ticksPer64th * 2, velocity: velocity - 10 },
+            { pitch: [pitch - 2], duration: `T${ticksPer64th}`, startTick: startTick + ticksPer64th * 3, velocity: velocity - 5 },
+            { pitch: [pitch], duration: `T${ticksPer64th}`, startTick: startTick + ticksPer64th * 4, velocity: velocity },
         ];
     }
 };
@@ -34,7 +56,7 @@ function generateOrnamentForSong(songData, helpers) {
                      return; // Esce se non trova note
                 }
 
-                const ornamentType = Math.random() < 0.5 ? 'trill' : 'graceNote';
+                const ornamentType = ["trill", "graceNote", "mordent", "gruppetto"][Math.floor(Math.random() * 4)];
                 const targetNote = chordNotes[1] || chordNotes[0];
                 if (!targetNote) return;
 
