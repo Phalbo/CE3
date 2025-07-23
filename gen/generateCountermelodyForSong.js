@@ -20,7 +20,12 @@ function generateCountermelodyForSong(songData, helpers, sectionCache) {
 
         const sectionTrack = [];
         section.mainChordSlots.forEach((slot) => {
-            const chordNotes = getChordNotes(slot.chordName).notes;
+            const chordNotesResult = getChordNotes(slot.chordName);
+            const chordNotes = chordNotesResult ? chordNotesResult.notes : [];
+            if (!chordNotes || chordNotes.length === 0) {
+                console.warn(`Skipping slot for ${slot.chordName}: No chord notes found.`);
+                return;
+            }
             if (chordNotes.length < 3) return;
 
             const pitches = chordNotes.map(n => NOTE_NAMES.indexOf(n) + 60);

@@ -41,34 +41,37 @@ const ORNAMENTS = {
 };
 
 function generateOrnamentForSong(songData, helpers) {
-    console.log("Ornament Generator: Avviato."); // LOG 1
+    console.log("Ornament Generator: Avviato.");
     const track = [];
-    const { getChordNotes, NOTE_NAMES, normalizeSectionName } = helpers;
+    const { getChordNotes, NOTE_NAMES } = helpers;
+    const ticksPerBeat = 128;
 
     songData.sections.forEach(section => {
         section.mainChordSlots.forEach(slot => {
-            if (Math.random() < 0.15) {
-                console.log("Ornament Generator: Tentativo di generare ornamento per lo slot:", slot.chordName); // LOG 2
-                const chordNotes = getChordNotes(slot.chordName).notes;
+            const beatsInSlot = slot.effectiveDurationTicks / ticksPerBeat;
+            for(let beat = 0; beat < beatsInSlot; beat++) {
+                if (Math.random() < 0.05) { // Lower probability per beat
+                    const chordNotesResult = getChordNotes(slot.chordName);
+                    const chordNotes = chordNotesResult ? chordNotesResult.notes : [];
+                    if (!chordNotes || chordNotes.length === 0) {
+                        console.warn(`Skipping ornament for ${slot.chordName}: No chord notes found.`);
+                        continue;
+                    }
 
-                if (!chordNotes || chordNotes.length === 0) {
-                     console.error("Ornament Generator: Fallito. Nessuna nota trovata per l'accordo:", slot.chordName); // LOG 3
-                     return; // Esce se non trova note
+                    const ornamentType = ["trill", "graceNote", "mordent", "gruppetto"][Math.floor(Math.random() * 4)];
+                    const targetNote = chordNotes[1] || chordNotes[0];
+                    if (!targetNote) continue;
+
+                    const pitch = NOTE_NAMES.indexOf(targetNote) + 60;
+                    const ornamentStartTick = slot.effectiveStartTickInSection + (beat * ticksPerBeat);
+
+                    const ornamentEvents = ORNAMENTS[ornamentType](pitch, ornamentStartTick, helpers);
+                    track.push(...ornamentEvents);
+                    console.log(`Ornament Generator: Ornamento '${ornamentType}' creato con successo.`);
                 }
-
-                const ornamentType = ["trill", "graceNote", "mordent", "gruppetto"][Math.floor(Math.random() * 4)];
-                const targetNote = chordNotes[1] || chordNotes[0];
-                if (!targetNote) return;
-
-                const pitch = NOTE_NAMES.indexOf(targetNote) + 60;
-                const ornamentStartTick = (slot.effectiveStartTickInSection + slot.effectiveDurationTicks) - 64;
-
-                const ornamentEvents = ORNAMENTS[ornamentType](pitch, ornamentStartTick, helpers);
-                track.push(...ornamentEvents);
-                console.log(`Ornament Generator: Ornamento '${ornamentType}' creato con successo.`); // LOG 4
             }
         });
     });
-    console.log("Ornament Generator: Processo completato. Eventi totali:", track.length); // LOG 5
+    console.log("Ornament Generator: Processo completato. Eventi totali:", track.length);
     return track;
 }
