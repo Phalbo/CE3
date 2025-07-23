@@ -75,55 +75,49 @@ function handleSaveSong() {
     URL.revokeObjectURL(url);
 }
 
-function downloadSingleTrackMidi(trackName, midiEvents, fileName, bpm, timeSignatureChangesArray, instrumentId = 0, isDrumTrack = false) {
-    if (!isDrumTrack && (!midiEvents || midiEvents.length === 0)) {
-         alert("No MIDI events generated for this track.");
-         return;
-    }
-    if (typeof MidiWriter === 'undefined') {
-        alert("Internal Error: MIDI library not found.");
+function downloadSingleTrackMidi(trackName, midiEvents, fileName, bpm) {
+    if (!midiEvents || midiEvents.length === 0) {
+        alert(`No MIDI events generated for ${trackName}.`);
         return;
     }
 
+    const instrumentConfig = INSTRUMENT_MAP[trackName] || { program: 0, channel: 1 };
     const track = new MidiWriter.Track();
-    track.setTempo(bpm, 0);
-    track.addTrackName(trackName);
 
-    const actualTimeSignatures = (currentMidiData && currentMidiData.timeSignatureChanges && currentMidiData.timeSignatureChanges.length > 0)
-                                 ? currentMidiData.timeSignatureChanges
-                                 : (timeSignatureChangesArray && timeSignatureChangesArray.length > 0 ? timeSignatureChangesArray : [{tick: 0, ts: [4,4]}]);
+    track.setTempo(bpm);
 
-    actualTimeSignatures.forEach(tsEvent => {
+    if (instrumentConfig.channel !== 10) {
+        track.addEvent(new MidiWriter.ProgramChangeEvent({
+            instrument: instrumentConfig.program
+        }));
+    }
+
+    const timeSignatureChanges = currentMidiData.timeSignatureChanges || [{tick: 0, ts: [4,4]}];
+    timeSignatureChanges.forEach(tsEvent => {
         track.addEvent(new MidiWriter.TimeSignatureEvent(tsEvent.ts[0], tsEvent.ts[1]), {tick: Math.round(tsEvent.tick)});
     });
 
-    if (midiEvents && midiEvents.length > 0) {
-        midiEvents.forEach(event => {
-            if (!event || typeof event.pitch === 'undefined' || !event.duration || typeof event.startTick === 'undefined') return;
-            const pitchArray = Array.isArray(event.pitch) ? event.pitch : [event.pitch];
-            const durationString = typeof event.duration === 'string' && event.duration.startsWith('T') ? event.duration : `T${Math.round(event.duration)}`;
+    midiEvents.forEach(event => {
+        const noteEventArgs = {
+            pitch: Array.isArray(event.pitch) ? event.pitch : [event.pitch],
+            duration: typeof event.duration === 'string' ? event.duration : `T${Math.round(event.duration)}`,
+            startTick: Math.round(event.startTick),
+            velocity: event.velocity || 80,
+            channel: instrumentConfig.channel
+        };
 
-            const noteEventArgs = {
-                pitch: pitchArray.filter(p => p !== null && p >=0 && p <=127),
-                duration: durationString,
-                startTick: Math.round(event.startTick),
-                velocity: event.velocity || (isDrumTrack ? 90 : 70),
-            };
-            if (trackName === 'Percussion' || trackName === 'Drums' || trackName === 'Drum Track') {
-                noteEventArgs.channel = 10;
-            }
-            if (noteEventArgs.pitch.length === 0) return;
-
-            try {
+        if (noteEventArgs.pitch.length > 0) {
+             try {
                 track.addEvent(new MidiWriter.NoteEvent(noteEventArgs));
             } catch (e) {
                 console.error("Error adding NoteEvent:", e, "Event data:", noteEventArgs);
             }
-        });
-    }
+        }
+    });
 
     const writer = new MidiWriter.Writer([track]);
     const dataUri = writer.dataUri();
+
     const link = document.createElement('a');
     link.href = dataUri;
     link.download = fileName.replace(/[^\w\s.-]/gi,'_').replace(/\s+/g,'_');
@@ -171,7 +165,7 @@ function handleGenerateSingleTrackChordMidi(returnOnly = false) {
     if (returnOnly) return chordMIDIEvents;
 
     const midiFileNameST = `${title.replace(/[^a-zA-Z0-9_]/g, '_')}_Pad.mid`;
-    downloadSingleTrackMidi(`Pad for ${title}`, chordMIDIEvents, midiFileNameST, bpm, timeSignatureChanges, 0);
+    downloadSingleTrackMidi(`Pad`, chordMIDIEvents, midiFileNameST, bpm);
 }
 
 function handleGenerateChordRhythm(returnOnly = false) {
@@ -204,7 +198,7 @@ function handleGenerateChordRhythm(returnOnly = false) {
 
         if (allRhythmicChordEvents.length > 0) {
             const fileName = `${currentMidiData.title.replace(/[^a-zA-Z0-9_]/g, '_')}_Arpeggio.mid`;
-            downloadSingleTrackMidi(`Arpeggio for ${currentMidiData.title}`, allRhythmicChordEvents, fileName, currentMidiData.bpm, currentMidiData.timeSignatureChanges, 0);
+            downloadSingleTrackMidi(`Arpeggio`, allRhythmicChordEvents, fileName, currentMidiData.bpm);
         } else {
             alert("Could not generate arpeggio with the current data.");
         }
@@ -228,7 +222,7 @@ function handleGenerateMelody() {
         const generatedMelody = generateMelodyForSong(currentMidiData, currentMidiData.mainScaleNotes, currentMidiData.mainScaleRoot, CHORD_LIB, scales, NOTE_NAMES, allNotesWithFlats, getChordNotes, getNoteName, getRandomElement, getChordRootAndType, sectionCache);
         if (generatedMelody && generatedMelody.length > 0) {
             const fileName = `${currentMidiData.title.replace(/[^a-zA-Z0-9_]/g, '_')}_Melody.mid`;
-            downloadSingleTrackMidi(`Melody for ${currentMidiData.title}`, generatedMelody, fileName, currentMidiData.bpm, currentMidiData.timeSignatureChanges, 0);
+            downloadSingleTrackMidi(`Melody`, generatedMelody, fileName, currentMidiData.bpm);
         } else { alert("Could not generate a melody with the current data."); }
     } catch (e) {
         console.error("Critical error during melody generation:", e, e.stack);
@@ -250,7 +244,7 @@ function handleGenerateVocalLine() {
         const vocalLine = generateVocalLineForSong(currentMidiData, currentMidiData.mainScaleNotes, currentMidiData.mainScaleRoot, CHORD_LIB, scales, NOTE_NAMES, allNotesWithFlats, getChordNotes, getNoteName, getRandomElement, getChordRootAndType, options, sectionCache);
         if (vocalLine && vocalLine.length > 0) {
             const fileName = `${currentMidiData.title.replace(/[^a-zA-Z0-9_]/g, '_')}_Vocal.mid`;
-            downloadSingleTrackMidi(`Vocal for ${currentMidiData.title}`, vocalLine, fileName, currentMidiData.bpm, currentMidiData.timeSignatureChanges, 0);
+            downloadSingleTrackMidi(`Vocal`, vocalLine, fileName, currentMidiData.bpm);
         } else { alert("Could not generate a vocal line with the current data."); }
     } catch (e) {
         console.error("Error during vocal line generation:", e, e.stack);
@@ -280,7 +274,7 @@ function handleGenerateBassLine() {
         const bassLine = generateBassLineForSong(currentMidiData, helpers, sectionCache);
         if (bassLine && bassLine.length > 0) {
             const fileName = `${currentMidiData.title.replace(/[^a-zA-Z0-9_]/g, '_')}_Bass.mid`;
-            downloadSingleTrackMidi(`Bass for ${currentMidiData.title}`, bassLine, fileName, currentMidiData.bpm, currentMidiData.timeSignatureChanges, 0);
+            downloadSingleTrackMidi(`Bass`, bassLine, fileName, currentMidiData.bpm);
         } else { alert("Could not generate a bass line with the current data."); }
     } catch (e) {
         console.error("Error during bass line generation:", e, e.stack);
@@ -303,7 +297,7 @@ function handleGenerateDrumTrack() {
         const drumEvents = generateDrumTrackForSong(currentMidiData, currentMidiData.bpm, null, currentMidiData.sections, CHORD_LIB, NOTE_NAMES, getRandomElement, drumTrackOptions, sectionCache);
         if (drumEvents && drumEvents.length > 0) {
             const fileName = `${currentMidiData.title.replace(/[^a-zA-Z0-9_]/g, '_')}_Drums.mid`;
-            downloadSingleTrackMidi(`Drums for ${currentMidiData.title}`, drumEvents, fileName, currentMidiData.bpm, currentMidiData.timeSignatureChanges, 0, true);
+            downloadSingleTrackMidi(`Drums`, drumEvents, fileName, currentMidiData.bpm);
         } else { alert("Could not generate a drum track with the current data."); }
     } catch (e) {
         console.error("Error during drum track generation:", e, e.stack);
