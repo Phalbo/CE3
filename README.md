@@ -1,14 +1,20 @@
-# CapricEngine v2.28
+# CapricEngine v2.29
 
-## Changelog (v2.28)
+## Changelog (v2.29)
 
-*   **Critical UI and Event Listener Fix:** This version provides a structural fix for a critical `TypeError` that prevented action buttons from being displayed and functioning.
-    *   **Dynamic Button Creation:** Reverted to a dynamic button creation model within `main/app-setup.js`. This resolves the timing issue where event listeners were attached before the DOM elements were available, ensuring all 14 generator buttons are now correctly rendered, styled, and functional.
-    *   **Correct Layout (7+7):** Implemented a responsive 7+7 button layout using two separate container divs, as requested.
-    *   **Pad Generator Restored:** The "Pad" generator is now fully operational.
-*   **Code Cleanup:**
-    *   Removed all experimental multi-track export logic and buttons.
-    *   Simplified the `addTrackToMidiData` helper to trigger direct single-track downloads, ensuring a consistent user experience across all generators.
+*   **UI and Layout:**
+    *   Styled the "download your global hit in MIDI format" title to match the glossary title.
+    *   Fixed the button layout to be centered and responsive.
+    *   Standardized the button size to be uniform.
+*   **Bug Fixes:**
+    *   Fixed a critical bug that caused multiple MIDI files to be generated on a single click by centralizing the event listener handling.
+*   **Generator Improvements:**
+    *   **Countermelody:** Increased rhythmic density and melodic variety by using eighth notes and more complex arpeggio patterns.
+    *   **Texture:** Introduced chord inversions to create a more distinct harmonic texture.
+    *   **Ornament:** Added new "mordent" and "gruppetto" patterns, humanized note velocity, and added debug logs.
+    *   **Miasmatic:** Added 10 new patterns with syncopated rhythms and strategic pauses.
+    *   **Percussion:** Ensured that the correct MIDI notes are used for the drum kit and percussions, and that both tracks are exported on MIDI channel 10.
+    *   **Glitch FX:** Improved harmonic coherence by using notes from the current chord and added new "tape stop" and "reverse" effects.
 
 # CapricEngine v2.26
 
