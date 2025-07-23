@@ -81,25 +81,28 @@ function downloadSingleTrackMidi(trackName, midiEvents, fileName, bpm) {
         return;
     }
 
-    // 1. Recupera la configurazione corretta dalla mappa
     const instrumentConfig = INSTRUMENT_MAP[trackName] || { program: 0, channel: 1 };
     const track = new MidiWriter.Track();
 
     track.setTempo(bpm);
 
-    // --- FIX CRUCIALE: Aggiunge il nome della traccia DENTRO il file MIDI ---
-    track.addTrackName(trackName);
+    // --- FIX #1: Ripristina il nome completo della traccia ---
+    const fullTrackName = `${trackName} for ${currentMidiData.title}`;
+    track.addTrackName(fullTrackName);
 
-    // 2. Imposta il Program Change (cambio strumento) solo per tracce non percussive
+    // --- FIX #2: Assegna il Program Change al canale corretto ---
     if (instrumentConfig.channel !== 10) {
         track.addEvent(new MidiWriter.ProgramChangeEvent({
             instrument: instrumentConfig.program
-        }));
+        }), { channel: instrumentConfig.channel }); // Specifica il canale QUI
     }
 
-    // 3. Aggiunge gli eventi delle note, assicurandosi che il canale sia corretto
+    const timeSignatureChanges = currentMidiData.timeSignatureChanges || [{tick: 0, ts: [4,4]}];
+    timeSignatureChanges.forEach(tsEvent => {
+        track.addEvent(new MidiWriter.TimeSignatureEvent(tsEvent.ts[0], tsEvent.ts[1]), {tick: Math.round(tsEvent.tick)});
+    });
+
     midiEvents.forEach(event => {
-        // Salta eventi non validi per prevenire tracce vuote
         if (!event || typeof event.pitch === 'undefined' || !event.duration || typeof event.startTick === 'undefined') return;
 
         const noteEventArgs = {
@@ -119,7 +122,6 @@ function downloadSingleTrackMidi(trackName, midiEvents, fileName, bpm) {
         }
     });
 
-    // 4. Crea il file MIDI con UNA SOLA TRACCIA, quella che abbiamo appena costruito
     const writer = new MidiWriter.Writer([track]);
     const dataUri = writer.dataUri();
 
